@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MénagePro">
+<title>MénagePro — Location Saisonnière</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: rgba(255,255,255,0.07);
+    --accent: #c8ff3e;
+    --accent2: #3effb8;
+    --accent3: #ff6b3e;
+    --text: #f0f0f5;
+    --muted: rgba(240,240,245,0.45);
+    --radius: 20px;
+    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .syne { font-family: 'Syne', sans-serif; }
+
+  /* ─── SCREENS ─── */
+  .screen {
+    display: none;
+    min-height: 100dvh;
+    padding: 0;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ─── HOME SCREEN ─── */
+  .home-header {
+    padding: 60px 28px 32px;
+    background: linear-gradient(180deg, #0d0d18 0%, var(--bg) 100%);
+  }
+  .home-header .label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .home-header h1 { font-size: 34px; font-weight: 800; line-height: 1.1; }
+  .home-header h1 span { color: var(--accent); }
+
+  .stats-strip {
+    display: flex;
+    gap: 12px;
+    padding: 0 28px;
+    margin: 20px 0 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stats-strip::-webkit-scrollbar { display: none; }
+
+  .stat-card {
+    flex: 0 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    min-width: 130px;
+  }
+  .stat-card .val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; }
+  .stat-card .val.green { color: var(--accent); }
+  .stat-card .val.teal { color: var(--accent2); }
+  .stat-card .val.orange { color: var(--accent3); }
+  .stat-card .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+
+  .section-label {
+    padding: 0 28px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .btn-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 28px 14px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+    width: calc(100% - 56px);
+  }
+  .btn-main:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-main .arrow { font-size: 22px; }
+
+  .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 28px 14px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: calc(100% - 56px);
+  }
+  .btn-secondary:active { transform: scale(0.97); }
+  .btn-secondary .sub { font-size: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-weight: 400; margin-top: 2px; }
+  .btn-secondary .left { text-align: left; }
+  .btn-secondary .icon { font-size: 24px; }
+
+  .history-list { padding: 0 28px; flex: 1; }
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .history-item .date { font-size: 13px; color: var(--muted); }
+  .history-item .time-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+  .history-item .badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge.record { background: rgba(200,255,62,0.15); color: var(--accent); }
+  .badge.good { background: rgba(62,255,184,0.15); color: var(--accent2); }
+  .badge.slow { background: rgba(255,107,62,0.15); color: var(--accent3); }
+
+  /* ─── TASK LIST SCREEN ─── */
+  .task-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 50px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .back-btn {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .task-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
+
+  .add-task-bar {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .add-task-bar input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+  }
+  .add-task-bar input:focus { border-color: var(--accent); }
+  .add-task-bar input::placeholder { color: var(--muted); }
+
+  .time-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 10px;
+  }
+  .time-input-group input[type=number] {
+    width: 36px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .time-input-group input[type=number]::-webkit-outer-spin-button,
+  .time-input-group input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .time-input-group .sep { color: var(--muted); font-weight: 700; }
+
+  .add-btn {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    font-weight: 700;
+  }
+
+  .tasks-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 20px;
+  }
+
+  .task-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: var(--transition);
+  }
+  .task-item:active { transform: scale(0.98); }
+  .task-drag { color: var(--muted); font-size: 20px; cursor: grab; flex-shrink: 0; }
+  .task-info { flex: 1; min-width: 0; }
+  .task-name { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task-time { font-family: 'Syne', sans-serif; font-size: 12px; color: var(--accent); margin-top: 2px; }
+  .task-del {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(255,107,62,0.12);
+    border: none;
+    color: var(--accent3);
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .task-edit {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  .total-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .total-bar .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .total-bar .val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
+
+  /* ─── SESSION SCREEN ─── */
+  .session-screen {
+    background: var(--bg);
+  }
+
+  .session-top {
+    padding: 50px 24px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .session-mode-badge {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .mode-test { background: rgba(255,107,62,0.15); color: var(--accent3); }
+  .mode-real { background: rgba(200,255,62,0.15); color: var(--accent); }
+
+  .session-stop {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .progress-container {
+    padding: 0 24px;
+    margin-bottom: 24px;
+  }
+  .progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  .current-task-card {
+    margin: 0 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .current-task-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .task-number {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .current-task-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 28px;
+  }
+
+  .timers-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .timer-block {
+    background: var(--surface2);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .timer-block .tlbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .timer-block .tval {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .timer-block.elapsed .tval { color: var(--text); }
+  .timer-block.target .tval { color: var(--accent); }
+  .timer-block.overtime .tval { color: var(--accent3) !important; animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+  .btn-done {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 18px;
+    padding: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: var(--transition);
+  }
+  .btn-done:active { transform: scale(0.97); }
+  .btn-done .check { font-size: 22px; }
+
+  .next-task-preview {
+    margin: 16px 20px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .next-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .next-name { font-size: 14px; font-weight: 500; }
+  .next-time { font-size: 12px; color: var(--accent2); font-family: 'Syne', sans-serif; font-weight: 600; }
+  .next-icon { font-size: 20px; margin-left: auto; color: var(--muted); }
+
+  .session-global {
+    margin: 14px 20px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .session-global .sg-item .sg-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .session-global .sg-item .sg-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+
+  /* ─── TRANSITION OVERLAY ─── */
+  .transition-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .transition-overlay.visible { opacity: 1; pointer-events: all; }
+  .transition-overlay .next-up { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; }
+  .transition-overlay .task-big { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; text-align: center; padding: 0 32px; line-height: 1.2; }
+  .transition-overlay .countdown-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 80px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-top: 32px;
+    animation: countPulse 1s ease infinite;
+  }
+  @keyframes countPulse { 0% { transform: scale(1.1); } 50% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+  /* ─── RESULTS SCREEN ─── */
+  .results-screen { overflow-y: auto; }
+  .results-header {
+    padding: 60px 28px 32px;
+    background: linear-gradient(180deg, #0d0d18 0%, var(--bg) 100%);
+    text-align: center;
+  }
+  .results-header .emoji { font-size: 52px; margin-bottom: 16px; }
+  .results-header h2 { font-size: 28px; font-weight: 800; }
+  .results-header .total-time {
+    font-family: 'Syne', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--accent);
+    margin: 12px 0 4px;
+  }
+  .results-header .vs-target { font-size: 14px; color: var(--muted); }
+
+  .results-chart { padding: 0 24px 20px; }
+  .results-chart h3 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+
+  .result-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .result-row .rr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .result-row .rr-name { font-size: 14px; font-weight: 500; }
+  .result-row .rr-times { font-family: 'Syne', sans-serif; font-size: 13px; }
+  .rr-times .actual { font-weight: 700; }
+  .rr-times .sep { color: var(--muted); margin: 0 4px; }
+  .rr-times .target-t { color: var(--muted); }
+  .result-row .rr-bar { height: 4px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .result-row .rr-fill { height: 100%; border-radius: 4px; }
+  .fill-good { background: var(--accent2); }
+  .fill-over { background: var(--accent3); }
+  .fill-perfect { background: var(--accent); }
+
+  .results-actions { padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ─── STATS SCREEN ─── */
+  .stats-screen { overflow-y: auto; }
+  .stats-header {
+    padding: 50px 24px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-content { padding: 20px 20px; }
+  .stats-section-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; margin-top: 24px; }
+  .stats-section-title:first-child { margin-top: 0; }
+
+  .record-card {
+    background: linear-gradient(135deg, rgba(200,255,62,0.1) 0%, var(--surface) 60%);
+    border: 1px solid rgba(200,255,62,0.25);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .record-card .rc-lbl { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+  .record-card .rc-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
+  .record-card .rc-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .task-stat-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .task-stat-row .ts-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .task-stat-row .ts-name { font-size: 14px; font-weight: 500; }
+  .task-stat-row .ts-best { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent); }
+  .task-stat-row .ts-avg { font-size: 12px; color: var(--muted); }
+  .ts-compare { display: flex; gap: 8px; margin-top: 6px; }
+  .ts-compare .tc-item {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .tc-item .tc-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .tc-item .tc-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+
+  .no-data {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .no-data .nd-icon { font-size: 42px; margin-bottom: 12px; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-overlay.visible { opacity: 1; pointer-events: all; }
+  .modal-sheet {
+    width: 100%;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    padding: 24px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .modal-overlay.visible .modal-sheet { transform: none; }
+  .modal-sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .modal-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-time-row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .modal-time-row .time-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .modal-time-row input[type=number] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .modal-time-row input[type=number]::-webkit-outer-spin-button,
+  .modal-time-row input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .modal-time-row input[type=number]:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-cancel {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .modal-save {
+    flex: 2;
+    background: var(--accent);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    color: #0a0a0f;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 500;
+    transition: transform 0.35s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ─── MISC ─── */
+  .spacer { flex: 1; }
+  .flex { display: flex; }
+  .gap-8 { gap: 8px; }
+  .mt-8 { margin-top: 8px; }
+
+  /* drag highlight */
+  .task-item.dragging { opacity: 0.5; border: 1px dashed var(--accent); }
+  .task-item.drag-over { border-color: var(--accent2); }
+
+  /* session complete pulse */
+  @keyframes celebratePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+  .celebrate { animation: celebratePulse 0.5s ease 3; }
+</style>
+</head>
+<body>
+
+<!-- TRANSITION OVERLAY -->
+<div class="transition-overlay" id="transitionOverlay">
+  <div class="next-up">Prochaine tâche</div>
+  <div class="task-big" id="transitionTaskName">—</div>
+  <div class="countdown-big" id="transitionCountdown">3</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL EDIT TASK -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-sheet">
+    <h3>Modifier la tâche</h3>
+    <input class="modal-input" id="editTaskName" placeholder="Nom de la tâche" />
+    <div class="modal-time-row">
+      <div style="flex:1">
+        <div class="time-label">Minutes</div>
+        <input type="number" id="editMinutes" min="0" max="99" placeholder="00" />
+      </div>
+      <div style="flex:1">
+        <div class="time-label">Secondes</div>
+        <input type="number" id="editSeconds" min="0" max="59" placeholder="00" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeEditModal()">Annuler</button>
+      <button class="modal-save" onclick="saveEditTask()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: HOME ════════ -->
+<div class="screen active" id="screenHome">
+  <div class="home-header">
+    <div class="label">Votre location saisonnière</div>
+    <h1>Ménage<br><span>Pro</span></h1>
+  </div>
+
+  <div class="stats-strip" id="homeStatsStrip">
+    <div class="stat-card">
+      <div class="val green" id="statSessions">0</div>
+      <div class="lbl">Sessions</div>
+    </div>
+    <div class="stat-card">
+      <div class="val teal" id="statBestTime">—</div>
+      <div class="lbl">Record</div>
+    </div>
+    <div class="stat-card">
+      <div class="val orange" id="statAvgTime">—</div>
+      <div class="lbl">Moyenne</div>
+    </div>
+    <div class="stat-card">
+      <div class="val green" id="statTarget">—</div>
+      <div class="lbl">Objectif</div>
+    </div>
+  </div>
+
+  <div class="section-label">Lancer une session</div>
+  <button class="btn-main" onclick="startSession('real')">
+    <div>
+      <div>🏃 Ménage complet</div>
+      <div style="font-size:12px;font-weight:400;margin-top:3px;opacity:0.7;" id="homeTargetTime">Chargement…</div>
+    </div>
+    <div class="arrow">→</div>
+  </button>
+  <button class="btn-secondary" onclick="startSession('test')">
+    <div class="left">
+      <div>⏱ Mode Test</div>
+      <div class="sub">Chronométrer sans objectif pour calibrer</div>
+    </div>
+    <div class="icon">→</div>
+  </button>
+
+  <div style="height:16px"></div>
+  <div class="section-label">Gérer</div>
+  <button class="btn-secondary" onclick="showScreen('screenTasks')">
+    <div class="left">
+      <div>📋 Mes tâches</div>
+      <div class="sub" id="taskCountLabel">Chargement…</div>
+    </div>
+    <div class="icon">→</div>
+  </button>
+  <button class="btn-secondary" onclick="showScreen('screenStats')">
+    <div class="left">
+      <div>📊 Statistiques & Records</div>
+      <div class="sub">Historique et challenges personnels</div>
+    </div>
+    <div class="icon">→</div>
+  </button>
+
+  <div style="height:16px"></div>
+  <div class="section-label">Dernières sessions</div>
+  <div class="history-list" id="homeHistory">
+    <div class="no-data"><div class="nd-icon">🗓️</div>Aucune session enregistrée</div>
+  </div>
+  <div style="height:30px"></div>
+</div>
+
+<!-- ════════ SCREEN: TASKS ════════ -->
+<div class="screen" id="screenTasks">
+  <div class="task-header">
+    <div class="back-btn" onclick="showScreen('screenHome')">←</div>
+    <h2>Mes tâches</h2>
+  </div>
+
+  <div class="add-task-bar">
+    <input type="text" id="newTaskName" placeholder="Nouvelle tâche…" />
+    <div class="time-input-group">
+      <input type="number" id="newTaskMin" min="0" max="99" value="5" />
+      <span class="sep">:</span>
+      <input type="number" id="newTaskSec" min="0" max="59" value="00" />
+    </div>
+    <button class="add-btn" onclick="addTask()">+</button>
+  </div>
+
+  <div class="tasks-scrollable" id="tasksList"></div>
+
+  <div class="total-bar">
+    <div class="lbl">Durée totale estimée</div>
+    <div class="val" id="tasksTotal">—</div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: SESSION ════════ -->
+<div class="screen session-screen" id="screenSession">
+  <div class="session-top">
+    <div class="session-mode-badge" id="sessionModeBadge">MODE</div>
+    <button class="session-stop" onclick="stopSession()">Arrêter ✕</button>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-text">
+      <span id="sessionProgressText">Tâche 1 / 1</span>
+      <span id="sessionProgressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="sessionProgressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="current-task-card" id="currentTaskCard">
+    <div class="task-number" id="sessionTaskNumber">Tâche 1 sur 1</div>
+    <div class="current-task-name" id="sessionTaskName">—</div>
+
+    <div class="timers-row">
+      <div class="timer-block elapsed">
+        <div class="tlbl">Temps écoulé</div>
+        <div class="tval" id="sessionElapsed">00:00</div>
+      </div>
+      <div class="timer-block target">
+        <div class="tlbl">Objectif</div>
+        <div class="tval" id="sessionTarget">—</div>
+      </div>
+    </div>
+
+    <button class="btn-done" onclick="completeTask()">
+      <span class="check">✓</span> Tâche terminée
+    </button>
+  </div>
+
+  <div class="next-task-preview" id="nextTaskPreview" style="display:none">
+    <div>
+      <div class="next-label">Suivante</div>
+      <div class="next-name" id="nextTaskName">—</div>
+      <div class="next-time" id="nextTaskTime">—</div>
+    </div>
+    <div class="next-icon">↓</div>
+  </div>
+
+  <div class="session-global">
+    <div class="sg-item">
+      <div class="sg-lbl">Total écoulé</div>
+      <div class="sg-val" id="sessionTotalElapsed">00:00</div>
+    </div>
+    <div class="sg-item" style="text-align:center">
+      <div class="sg-lbl">Total objectif</div>
+      <div class="sg-val" id="sessionTotalTarget">—</div>
+    </div>
+    <div class="sg-item" style="text-align:right">
+      <div class="sg-lbl">Restant</div>
+      <div class="sg-val" id="sessionTotalRemaining">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: RESULTS ════════ -->
+<div class="screen results-screen" id="screenResults">
+  <div class="results-header">
+    <div class="emoji" id="resultsEmoji">🏆</div>
+    <h2 id="resultsTitle">Session terminée !</h2>
+    <div class="total-time" id="resultsTotalTime">0:00:00</div>
+    <div class="vs-target" id="resultsVsTarget">vs objectif : —</div>
+  </div>
+
+  <div class="results-chart">
+    <h3>Détail par tâche</h3>
+    <div id="resultsTaskList"></div>
+  </div>
+
+  <div class="results-actions">
+    <button class="btn-main" onclick="showScreen('screenHome'); renderHome();">
+      ← Retour à l'accueil
+    </button>
+    <button class="btn-secondary" onclick="showScreen('screenStats')">
+      <div class="left"><div>📊 Voir les statistiques</div></div>
+      <div class="icon">→</div>
+    </button>
+  </div>
+</div>
+
+<!-- ════════ SCREEN: STATS ════════ -->
+<div class="screen stats-screen" id="screenStats">
+  <div class="stats-header">
+    <div class="back-btn" onclick="showScreen('screenHome')">←</div>
+    <h2>Statistiques</h2>
+  </div>
+  <div class="stats-content" id="statsContent"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  STATE & STORAGE
+// ══════════════════════════════════════════════════
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+
+const DEFAULT_TASKS = [
+  { id: uid(), name: "Poussière des plinthes",               seconds: 300 },
+  { id: uid(), name: "Nettoyer les murs avec éponge magique", seconds: 480 },
+  { id: uid(), name: "Nettoyer les vitres",                  seconds: 720 },
+  { id: uid(), name: "Mettre antical et frotter dans les sdb", seconds: 300 },
+  { id: uid(), name: "Nettoyer SDB",                         seconds: 900 },
+  { id: uid(), name: "Nettoyer la cuisine",                  seconds: 2100 },
+  { id: uid(), name: "Nettoyer les WC",                      seconds: 720 },
+  { id: uid(), name: "Nettoyer les Roborock",                seconds: 180 },
+  { id: uid(), name: "Roborock serpillère",                  seconds: 120 },
+  { id: uid(), name: "Nettoyer Skimmers et robot",           seconds: 600 },
+  { id: uid(), name: "Nettoyer filtre piscine",              seconds: 300 },
+  { id: uid(), name: "Enlever les draps et serviettes",      seconds: 300 },
+  { id: uid(), name: "Nettoyer tables de nuit et les lever", seconds: 300 },
+  { id: uid(), name: "Faire les lits",                       seconds: 1500 },
+  { id: uid(), name: "Buanderie",                            seconds: 720 },
+  { id: uid(), name: "Terrasse et Barbecue",                 seconds: 900 },
+  { id: uid(), name: "Nettoyer les abords piscine",         seconds: 380 },
+  { id: uid(), name: "Tondre pelouse, entrée et jeu de boules", seconds: 1800 },
+];
+
+function uid() { return Math.random().toString(36).slice(2,9); }
+
+let tasks = LS.get('tasks') || DEFAULT_TASKS;
+let sessions = LS.get('sessions') || [];
+
+function saveTasks() { LS.set('tasks', tasks); }
+function saveSessions() { LS.set('sessions', sessions); }
+
+// ══════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screenTasks') renderTaskList();
+  if (id === 'screenStats') renderStats();
+}
+
+// ══════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════
+function fmtTime(s) {
+  const m = Math.floor(Math.abs(s) / 60);
+  const sec = Math.abs(s) % 60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function fmtHMS(s) {
+  const h = Math.floor(s/3600);
+  const m = Math.floor((s%3600)/60);
+  const sec = s%60;
+  if(h>0) return `${h}h${String(m).padStart(2,'0')}m`;
+  return `${m}m${String(sec).padStart(2,'0')}s`;
+}
+function totalSeconds() { return tasks.reduce((a,t) => a + t.seconds, 0); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════════════
+function renderHome() {
+  const total = totalSeconds();
+  document.getElementById('homeTargetTime').textContent = `Durée estimée : ${fmtHMS(total)}`;
+  document.getElementById('statTarget').textContent = fmtHMS(total);
+  document.getElementById('taskCountLabel').textContent = `${tasks.length} tâches • ${fmtHMS(total)}`;
+
+  const realSessions = sessions.filter(s => s.mode === 'real');
+  document.getElementById('statSessions').textContent = realSessions.length;
+
+  if (realSessions.length > 0) {
+    const best = Math.min(...realSessions.map(s => s.totalElapsed));
+    const avg = Math.round(realSessions.reduce((a,s) => a+s.totalElapsed, 0) / realSessions.length);
+    document.getElementById('statBestTime').textContent = fmtHMS(best);
+    document.getElementById('statAvgTime').textContent = fmtHMS(avg);
+  } else {
+    document.getElementById('statBestTime').textContent = '—';
+    document.getElementById('statAvgTime').textContent = '—';
+  }
+
+  // History
+  const hist = document.getElementById('homeHistory');
+  const sorted = [...sessions].filter(s=>s.mode==='real').sort((a,b) => b.date - a.date).slice(0,5);
+  if (sorted.length === 0) {
+    hist.innerHTML = '<div class="no-data"><div class="nd-icon">🗓️</div>Aucune session enregistrée</div>';
+    return;
+  }
+  const best = Math.min(...sessions.filter(s=>s.mode==='real').map(s=>s.totalElapsed));
+  hist.innerHTML = sorted.map(s => {
+    const d = new Date(s.date);
+    const dateStr = d.toLocaleDateString('fr-FR', {day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const diff = s.totalElapsed - totalSeconds();
+    let badge = '';
+    if (s.totalElapsed === best) badge = '<span class="badge record">🏆 Record</span>';
+    else if (diff <= 0) badge = '<span class="badge good">En avance</span>';
+    else badge = '<span class="badge slow">+' + fmtHMS(Math.abs(diff)) + '</span>';
+    return `<div class="history-item">
+      <div>
+        <div style="font-size:13px;font-weight:500;">${dateStr}</div>
+        <div class="date">${fmtHMS(s.totalElapsed)}</div>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  TASK LIST
+// ══════════════════════════════════════════════════
+function renderTaskList() {
+  const list = document.getElementById('tasksList');
+  list.innerHTML = tasks.map((t,i) => `
+    <div class="task-item" draggable="true" data-index="${i}" 
+         ondragstart="dragStart(event,${i})" ondragover="dragOver(event,${i})" ondrop="drop(event,${i})" ondragleave="dragLeave(event)">
+      <div class="task-drag">⠿</div>
+      <div class="task-info">
+        <div class="task-name">${t.name}</div>
+        <div class="task-time">⏱ ${fmtTime(t.seconds)}</div>
+      </div>
+      <button class="task-edit" onclick="openEditModal(${i})">✏️</button>
+      <button class="task-del" onclick="deleteTask(${i})">✕</button>
+    </div>
+  `).join('');
+  document.getElementById('tasksTotal').textContent = fmtHMS(totalSeconds());
+}
+
+function addTask() {
+  const name = document.getElementById('newTaskName').value.trim();
+  const min = parseInt(document.getElementById('newTaskMin').value) || 0;
+  const sec = parseInt(document.getElementById('newTaskSec').value) || 0;
+  if (!name) { showToast('⚠️ Entrez un nom de tâche'); return; }
+  tasks.push({ id: uid(), name, seconds: min*60+sec });
+  saveTasks();
+  document.getElementById('newTaskName').value = '';
+  document.getElementById('newTaskMin').value = '5';
+  document.getElementById('newTaskSec').value = '00';
+  renderTaskList();
+  showToast('✅ Tâche ajoutée');
+}
+
+function deleteTask(i) {
+  tasks.splice(i, 1);
+  saveTasks();
+  renderTaskList();
+}
+
+// drag & drop
+let dragIdx = null;
+function dragStart(e, i) { dragIdx = i; e.currentTarget.classList.add('dragging'); }
+function dragOver(e, i) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function drop(e, i) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  document.querySelectorAll('.task-item').forEach(el => el.classList.remove('dragging'));
+  if (dragIdx === null || dragIdx === i) return;
+  const item = tasks.splice(dragIdx, 1)[0];
+  tasks.splice(i, 0, item);
+  saveTasks();
+  renderTaskList();
+  dragIdx = null;
+}
+
+// edit modal
+let editIdx = null;
+function openEditModal(i) {
+  editIdx = i;
+  const t = tasks[i];
+  document.getElementById('editTaskName').value = t.name;
+  document.getElementById('editMinutes').value = Math.floor(t.seconds/60);
+  document.getElementById('editSeconds').value = t.seconds % 60;
+  document.getElementById('editModal').classList.add('visible');
+}
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('visible');
+  editIdx = null;
+}
+function saveEditTask() {
+  if (editIdx === null) return;
+  const name = document.getElementById('editTaskName').value.trim();
+  const min = parseInt(document.getElementById('editMinutes').value) || 0;
+  const sec = parseInt(document.getElementById('editSeconds').value) || 0;
+  if (!name) { showToast('⚠️ Entrez un nom'); return; }
+  tasks[editIdx] = { ...tasks[editIdx], name, seconds: min*60+sec };
+  saveTasks();
+  closeEditModal();
+  renderTaskList();
+  showToast('✅ Tâche mise à jour');
+}
+
+// ══════════════════════════════════════════════════
+//  SESSION ENGINE
+// ══════════════════════════════════════════════════
+let session = null;
+let sessionInterval = null;
+
+function startSession(mode) {
+  if (tasks.length === 0) { showToast('⚠️ Aucune tâche configurée'); return; }
+  session = {
+    mode,
+    tasks: tasks.map(t => ({ ...t, elapsed: 0, completed: false })),
+    currentIdx: 0,
+    taskStart: Date.now(),
+    sessionStart: Date.now(),
+    totalElapsed: 0,
+  };
+  showScreen('screenSession');
+  document.getElementById('sessionModeBadge').textContent = mode === 'test' ? '⏱ MODE TEST' : '🏃 MÉNAGE RÉEL';
+  document.getElementById('sessionModeBadge').className = 'session-mode-badge ' + (mode==='test' ? 'mode-test' : 'mode-real');
+  updateSessionUI();
+  sessionInterval = setInterval(tickSession, 1000);
+  announceTask(session.currentIdx);
+}
+
+function tickSession() {
+  if (!session) return;
+  const now = Date.now();
+  const taskElapsed = Math.floor((now - session.taskStart) / 1000);
+  const totalElapsed = Math.floor((now - session.sessionStart) / 1000);
+  session.currentTaskElapsed = taskElapsed;
+  session.totalElapsed = totalElapsed;
+  updateSessionUI();
+}
+
+function updateSessionUI() {
+  if (!session) return;
+  const idx = session.currentIdx;
+  const t = session.tasks[idx];
+  const elapsed = session.currentTaskElapsed || 0;
+  const totalElapsed = session.totalElapsed || 0;
+
+  document.getElementById('sessionTaskNumber').textContent = `Tâche ${idx+1} sur ${session.tasks.length}`;
+  document.getElementById('sessionTaskName').textContent = t.name;
+  document.getElementById('sessionElapsed').textContent = fmtTime(elapsed);
+  document.getElementById('sessionTarget').textContent = fmtTime(t.seconds);
+
+  const elapsedEl = document.getElementById('sessionElapsed').parentElement;
+  if (elapsed > t.seconds) elapsedEl.classList.add('overtime');
+  else elapsedEl.classList.remove('overtime');
+
+  const pct = Math.round((idx / session.tasks.length) * 100);
+  document.getElementById('sessionProgressFill').style.width = pct + '%';
+  document.getElementById('sessionProgressText').textContent = `Tâche ${idx+1} / ${session.tasks.length}`;
+  document.getElementById('sessionProgressPct').textContent = pct + '%';
+
+  // Totals
+  const completedSeconds = session.tasks.slice(0, idx).reduce((a,t) => a + (t.elapsed||0), 0);
+  document.getElementById('sessionTotalElapsed').textContent = fmtHMS(totalElapsed);
+  const totalTarget = totalSeconds();
+  document.getElementById('sessionTotalTarget').textContent = fmtHMS(totalTarget);
+  const remaining = totalTarget - totalElapsed;
+  document.getElementById('sessionTotalRemaining').textContent = remaining > 0 ? fmtHMS(remaining) : '-' + fmtHMS(Math.abs(remaining));
+
+  // Next task
+  const next = session.tasks[idx+1];
+  if (next) {
+    document.getElementById('nextTaskPreview').style.display = 'flex';
+    document.getElementById('nextTaskName').textContent = next.name;
+    document.getElementById('nextTaskTime').textContent = fmtTime(next.seconds);
+  } else {
+    document.getElementById('nextTaskPreview').style.display = 'none';
+  }
+}
+
+function completeTask() {
+  if (!session) return;
+  clearInterval(sessionInterval);
+  const idx = session.currentIdx;
+  const elapsed = Math.floor((Date.now() - session.taskStart) / 1000);
+  session.tasks[idx].elapsed = elapsed;
+  session.tasks[idx].completed = true;
+
+  if (idx + 1 >= session.tasks.length) {
+    // Session complete
+    session.totalElapsed = Math.floor((Date.now() - session.sessionStart) / 1000);
+    finishSession();
+    return;
+  }
+
+  // Show transition
+  session.currentIdx++;
+  session.taskStart = Date.now() + 3000; // 3s countdown
+  session.currentTaskElapsed = 0;
+
+  showTransition(session.tasks[session.currentIdx]);
+}
+
+function showTransition(task) {
+  const overlay = document.getElementById('transitionOverlay');
+  document.getElementById('transitionTaskName').textContent = task.name;
+  overlay.classList.add('visible');
+  announceTask(session.currentIdx);
+
+  let count = 3;
+  document.getElementById('transitionCountdown').textContent = count;
+
+  const timer = setInterval(() => {
+    count--;
+    if (count <= 0) {
+      clearInterval(timer);
+      overlay.classList.remove('visible');
+      session.taskStart = Date.now();
+      session.currentTaskElapsed = 0;
+      updateSessionUI();
+      sessionInterval = setInterval(tickSession, 1000);
+      playBip();
+    } else {
+      document.getElementById('transitionCountdown').textContent = count;
+    }
+  }, 1000);
+}
+
+function stopSession() {
+  if (!confirm('Arrêter la session en cours ?')) return;
+  clearInterval(sessionInterval);
+  session = null;
+  showScreen('screenHome');
+  renderHome();
+}
+
+function finishSession() {
+  if (!session) return;
+
+  // Save session
+  const sessionData = {
+    date: Date.now(),
+    mode: session.mode,
+    totalElapsed: session.totalElapsed,
+    tasks: session.tasks.map(t => ({ id: t.id, name: t.name, target: t.seconds, elapsed: t.elapsed||0 }))
+  };
+  sessions.push(sessionData);
+  saveSessions();
+
+  showScreen('screenResults');
+  renderResults(sessionData);
+  session = null;
+}
+
+// ══════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════
+function renderResults(s) {
+  const total = s.totalElapsed;
+  const target = totalSeconds();
+  const diff = total - target;
+
+  document.getElementById('resultsTotalTime').textContent = fmtHMS(total);
+  document.getElementById('resultsVsTarget').textContent = `Objectif : ${fmtHMS(target)} • ${diff <= 0 ? '🎉 ' + fmtHMS(Math.abs(diff)) + ' d\'avance !' : '+' + fmtHMS(diff) + ' de retard'}`;
+
+  const realSessions = sessions.filter(s=>s.mode==='real');
+  if (s.mode === 'real' && realSessions.length > 0) {
+    const best = Math.min(...realSessions.map(s=>s.totalElapsed));
+    if (total === best) {
+      document.getElementById('resultsEmoji').textContent = '🏆';
+      document.getElementById('resultsTitle').textContent = 'Nouveau record !';
+    } else if (diff <= 0) {
+      document.getElementById('resultsEmoji').textContent = '⚡';
+      document.getElementById('resultsTitle').textContent = 'En avance sur l\'objectif !';
+    } else {
+      document.getElementById('resultsEmoji').textContent = '✅';
+      document.getElementById('resultsTitle').textContent = 'Session terminée !';
+    }
+  } else if (s.mode === 'test') {
+    document.getElementById('resultsEmoji').textContent = '⏱️';
+    document.getElementById('resultsTitle').textContent = 'Session test terminée';
+  }
+
+  const list = document.getElementById('resultsTaskList');
+  list.innerHTML = s.tasks.map(t => {
+    const ratio = t.elapsed / t.target;
+    const pct = Math.min(ratio * 100, 100);
+    const over = t.elapsed > t.target;
+    const diff = t.elapsed - t.target;
+    const fillClass = ratio <= 0.95 ? 'fill-perfect' : (over ? 'fill-over' : 'fill-good');
+    return `<div class="result-row">
+      <div class="rr-top">
+        <div class="rr-name">${t.name}</div>
+        <div class="rr-times">
+          <span class="actual" style="color:${over?'var(--accent3)':'var(--accent2)'}">${fmtTime(t.elapsed)}</span>
+          <span class="sep">/</span>
+          <span class="target-t">${fmtTime(t.target)}</span>
+        </div>
+      </div>
+      <div class="rr-bar"><div class="rr-fill ${fillClass}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  STATS
+// ══════════════════════════════════════════════════
+function renderStats() {
+  const container = document.getElementById('statsContent');
+  const realSessions = sessions.filter(s=>s.mode==='real');
+  const target = totalSeconds();
+
+  if (realSessions.length === 0) {
+    container.innerHTML = '<div class="no-data"><div class="nd-icon">📊</div>Lancez votre première session pour voir vos statistiques</div>';
+    return;
+  }
+
+  const best = Math.min(...realSessions.map(s=>s.totalElapsed));
+  const avg = Math.round(realSessions.reduce((a,s)=>a+s.totalElapsed,0)/realSessions.length);
+  const bestDate = new Date(realSessions.find(s=>s.totalElapsed===best).date);
+
+  let html = '';
+
+  // Global records
+  html += '<div class="stats-section-title">Records globaux</div>';
+  html += `<div class="record-card">
+    <div class="rc-lbl">🏆 Meilleur temps</div>
+    <div class="rc-val">${fmtHMS(best)}</div>
+    <div class="rc-sub">Objectif : ${fmtHMS(target)} • Réalisé le ${bestDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</div>
+  </div>`;
+
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+    <div class="stat-card">
+      <div class="val teal">${fmtHMS(avg)}</div>
+      <div class="lbl">Temps moyen</div>
+    </div>
+    <div class="stat-card">
+      <div class="val green">${realSessions.length}</div>
+      <div class="lbl">Sessions</div>
+    </div>
+  </div>`;
+
+  // Per-task stats
+  html += '<div class="stats-section-title">Records par tâche</div>';
+
+  tasks.forEach(task => {
+    const taskTimes = realSessions
+      .map(s => s.tasks.find(t => t.id === task.id || t.name === task.name))
+      .filter(Boolean)
+      .map(t => t.elapsed)
+      .filter(e => e > 0);
+
+    if (taskTimes.length === 0) return;
+
+    const tBest = Math.min(...taskTimes);
+    const tAvg = Math.round(taskTimes.reduce((a,b)=>a+b,0)/taskTimes.length);
+    const tTarget = task.seconds;
+
+    html += `<div class="task-stat-row">
+      <div class="ts-top">
+        <div class="ts-name">${task.name}</div>
+        <div class="ts-best">🏅 ${fmtTime(tBest)}</div>
+      </div>
+      <div class="ts-compare">
+        <div class="tc-item">
+          <div class="tc-lbl">Record</div>
+          <div class="tc-val" style="color:var(--accent)">${fmtTime(tBest)}</div>
+        </div>
+        <div class="tc-item">
+          <div class="tc-lbl">Moyenne</div>
+          <div class="tc-val" style="color:var(--accent2)">${fmtTime(tAvg)}</div>
+        </div>
+        <div class="tc-item">
+          <div class="tc-lbl">Objectif</div>
+          <div class="tc-val" style="color:var(--muted)">${fmtTime(tTarget)}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  VOICE & SOUND
+// ══════════════════════════════════════════════════
+const synth = window.speechSynthesis;
+
+function speak(text) {
+  if (!synth) return;
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'fr-FR';
+  utt.rate = 0.95;
+  utt.pitch = 1;
+  synth.speak(utt);
+}
+
+function announceTask(idx) {
+  if (!session) return;
+  const t = session.tasks[idx];
+  const msg = `Tâche ${idx+1} : ${t.name}. Objectif : ${Math.floor(t.seconds/60)} minutes.`;
+  speak(msg);
+}
+
+function playBip() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════
+renderHome();
+</script>
+</body>
+</html>
