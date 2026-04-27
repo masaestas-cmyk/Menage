@@ -10,1441 +10,614 @@
 <title>MénagePro — Location Saisonnière</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c28;
-    --border: rgba(255,255,255,0.07);
-    --accent: #c8ff3e;
-    --accent2: #3effb8;
-    --accent3: #ff6b3e;
-    --text: #f0f0f5;
-    --muted: rgba(240,240,245,0.45);
-    --radius: 20px;
-    --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
-  }
+:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:rgba(255,255,255,0.07);--accent:#c8ff3e;--accent2:#3effb8;--accent3:#ff6b3e;--text:#f0f0f5;--muted:rgba(240,240,245,0.45);--radius:20px;--tr:0.28s cubic-bezier(0.4,0,0.2,1);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.5;min-height:100dvh;overflow-x:hidden;}
+h1,h2,h3{font-family:'Syne',sans-serif;}
+.screen{display:none;min-height:100dvh;flex-direction:column;animation:fadeUp .32s ease;}
+.screen.active{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.back-btn{width:40px;height:40px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:50px 24px 18px;display:flex;align-items:center;gap:14px;}
+.page-header h2{font-size:20px;font-weight:700;flex:1;}
+.btn-primary{display:flex;align-items:center;justify-content:space-between;background:var(--accent);color:#0a0a0f;border:none;border-radius:var(--radius);padding:20px 24px;font-family:'Syne',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:var(--tr);width:100%;}
+.btn-primary:active{transform:scale(0.97);}
+.btn-secondary{display:flex;align-items:center;justify-content:space-between;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:var(--tr);width:100%;}
+.btn-secondary:active{transform:scale(0.97);}
+.btn-sub{font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;margin-top:3px;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* HOME */
+.home-hero{padding:58px 26px 28px;background:linear-gradient(180deg,#0d0d1a 0%,var(--bg) 100%);}
+.home-hero .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px;}
+.home-hero h1{font-size:36px;font-weight:800;line-height:1.05;}
+.home-hero h1 span{color:var(--accent);}
+.kpi-strip{display:flex;gap:10px;padding:0 24px;margin:18px 0 22px;overflow-x:auto;scrollbar-width:none;}
+.kpi-strip::-webkit-scrollbar{display:none;}
+.kpi{flex:0 0 auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 18px;min-width:120px;}
+.kpi .kv{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;}
+.kpi .kv.g{color:var(--accent);}.kpi .kv.t{color:var(--accent2);}.kpi .kv.o{color:var(--accent3);}.kpi .kv.w{color:#fff;}
+.kpi .kl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.score-ring-card{margin:0 24px 20px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:18px 20px;display:flex;align-items:center;gap:16px;}
+.score-ring{position:relative;width:68px;height:68px;flex-shrink:0;}
+.score-ring svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--surface2);stroke-width:7;}
+.ring-fill{fill:none;stroke:var(--accent);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .8s ease;}
+.ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:17px;font-weight:800;}
+.score-info .si-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.score-info .si-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.sec-lbl{padding:0 24px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.home-btns{padding:0 24px;display:flex;flex-direction:column;gap:11px;margin-bottom:20px;}
+.hist-list{padding:0 24px 36px;}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 16px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;}
+.hi-time{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}.hi-date{font-size:12px;color:var(--muted);}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.badge.rec{background:rgba(200,255,62,.15);color:var(--accent);}
+.badge.good{background:rgba(62,255,184,.15);color:var(--accent2);}
+.badge.slow{background:rgba(255,107,62,.15);color:var(--accent3);}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
-    min-height: 100dvh;
-    overflow-x: hidden;
-  }
+/* TASKS */
+.add-bar{display:flex;gap:8px;padding:14px 18px;background:var(--surface);border-bottom:1px solid var(--border);}
+.add-bar input[type=text]{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+.add-bar input[type=text]:focus{border-color:var(--accent);}
+.add-bar input[type=text]::placeholder{color:var(--muted);}
+.time-grp{display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px 10px;}
+.time-grp input{width:32px;background:none;border:none;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;text-align:center;outline:none;-moz-appearance:textfield;}
+.time-grp input::-webkit-outer-spin-button,.time-grp input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.time-grp .sep{color:var(--muted);font-weight:700;}
+.add-btn{width:44px;height:44px;border-radius:12px;background:var(--accent);border:none;color:#0a0a0f;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.tasks-list{flex:1;overflow-y:auto;padding:10px 18px;}
+.task-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 13px;margin-bottom:9px;display:flex;align-items:center;gap:9px;}
+.task-order{display:flex;flex-direction:column;gap:3px;flex-shrink:0;}
+.order-btn{width:28px;height:22px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr);}
+.order-btn:active{background:var(--accent);color:#000;border-color:var(--accent);}
+.task-info{flex:1;min-width:0;}
+.task-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.task-time-lbl{font-family:'Syne',sans-serif;font-size:12px;color:var(--accent);margin-top:2px;}
+.task-edit{width:32px;height:32px;border-radius:9px;background:var(--surface2);border:none;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.task-del{width:32px;height:32px;border-radius:9px;background:rgba(255,107,62,.1);border:none;color:var(--accent3);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.total-footer{background:var(--surface);border-top:1px solid var(--border);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;}
+.tf-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;}
+.tf-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent);}
 
-  h1, h2, h3, .syne { font-family: 'Syne', sans-serif; }
+/* SESSION */
+.sess-top{padding:48px 22px 16px;display:flex;justify-content:space-between;align-items:flex-start;}
+.mode-badge{font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:20px;font-weight:600;}
+.mode-test{background:rgba(255,107,62,.15);color:var(--accent3);}
+.mode-real{background:rgba(200,255,62,.15);color:var(--accent);}
+.stop-btn{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 14px;color:var(--text);font-size:13px;cursor:pointer;}
+.prog-wrap{padding:0 22px;margin-bottom:20px;}
+.prog-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px;}
+.prog-bar{height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:4px;transition:width .5s ease;}
+.task-card{margin:0 18px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:26px 22px;position:relative;overflow:hidden;}
+.task-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent2),var(--accent));}
+.tc-num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.tc-name{font-family:'Syne',sans-serif;font-size:23px;font-weight:700;line-height:1.2;margin-bottom:24px;}
+.timers-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.t-block{background:var(--surface2);border-radius:15px;padding:13px 15px;}
+.tb-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.tb-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.02em;}
+.t-elapsed .tb-val{color:var(--text);}
+.t-target .tb-val{color:var(--accent);}
+.t-overtime .tb-val{color:var(--accent3)!important;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.55}}
+.done-btn{width:100%;background:var(--accent);color:#0a0a0f;border:none;border-radius:16px;padding:19px;font-family:'Syne',sans-serif;font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--tr);}
+.done-btn:active{transform:scale(.97);}
+.next-preview{margin:14px 18px 0;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:13px 16px;display:flex;align-items:center;gap:12px;}
+.np-info{flex:1;}
+.np-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.np-name{font-size:14px;font-weight:500;margin-top:1px;}
+.np-time{font-family:'Syne',sans-serif;font-size:12px;color:var(--accent2);font-weight:600;}
+.sess-footer{margin:12px 18px 0;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:13px 16px;display:flex;justify-content:space-between;}
+.sf-item .sf-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;}
+.sf-item .sf-val{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;}
 
-  /* ─── SCREENS ─── */
-  .screen {
-    display: none;
-    min-height: 100dvh;
-    padding: 0;
-    animation: fadeIn 0.35s ease;
-  }
-  .screen.active { display: flex; flex-direction: column; }
+/* TRANSITION */
+.t-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:900;opacity:0;pointer-events:none;transition:opacity .28s ease;}
+.t-overlay.on{opacity:1;pointer-events:all;}
+.t-next-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:14px;}
+.t-task-name{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;text-align:center;padding:0 30px;line-height:1.2;margin-bottom:32px;}
+.t-count{font-family:'Syne',sans-serif;font-size:88px;font-weight:800;color:var(--accent);animation:cp 1s ease infinite;}
+@keyframes cp{0%{transform:scale(1.08)}50%{transform:scale(1)}100%{transform:scale(1.08)}}
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* RESULTS */
+.results-hero{padding:56px 26px 24px;text-align:center;background:linear-gradient(180deg,#0d0d1a 0%,var(--bg) 100%);}
+.res-emoji{font-size:50px;margin-bottom:14px;}
+.res-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;}
+.res-time{font-family:'Syne',sans-serif;font-size:54px;font-weight:800;color:var(--accent);margin:10px 0 4px;line-height:1;}
+.res-vs{font-size:13px;color:var(--muted);}
+.res-kpi-row{display:flex;gap:10px;padding:18px 22px 0;}
+.res-kpi{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 10px;text-align:center;}
+.rk-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.rk-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;}
+.res-section{padding:18px 22px 0;}
+.res-sec-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px;}
+.res-task-row{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;}
+.rtr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.rtr-name{font-size:13px;font-weight:500;flex:1;padding-right:8px;}
+.rtr-times{font-family:'Syne',sans-serif;font-size:13px;flex-shrink:0;}
+.rtr-actual{font-weight:700;}
+.rtr-sep{color:var(--muted);margin:0 3px;}
+.rtr-target{color:var(--muted);}
+.rtr-bar{height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.rtr-fill{height:100%;border-radius:4px;}
+.fill-under{background:var(--accent);}
+.fill-close{background:var(--accent2);}
+.fill-over{background:var(--accent3);}
+.res-actions{padding:18px 22px 44px;display:flex;flex-direction:column;gap:11px;}
 
-  /* ─── HOME SCREEN ─── */
-  .home-header {
-    padding: 60px 28px 32px;
-    background: linear-gradient(180deg, #0d0d18 0%, var(--bg) 100%);
-  }
-  .home-header .label {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .home-header h1 { font-size: 34px; font-weight: 800; line-height: 1.1; }
-  .home-header h1 span { color: var(--accent); }
+/* STATS */
+.stats-content{padding:18px 20px 44px;}
+.stats-sec-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px;margin-top:24px;}
+.stats-sec-title:first-child{margin-top:0;}
+.record-hero{background:linear-gradient(135deg,rgba(200,255,62,.1) 0%,var(--surface) 60%);border:1px solid rgba(200,255,62,.2);border-radius:20px;padding:20px;margin-bottom:12px;}
+.rh-lbl{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;margin-bottom:3px;}
+.rh-val{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;line-height:1;}
+.rh-sub{font-size:12px;color:var(--muted);margin-top:5px;}
+.global-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.g-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;}
+.gc-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.gc-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-top:3px;}
+.score-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;}
+.score-big{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:var(--accent);line-height:1;min-width:70px;}
+.sd-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.sd-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.evol-list{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px;}
+.evol-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.evol-item:last-child{border-bottom:none;}
+.ei-date{font-size:12px;color:var(--muted);width:58px;flex-shrink:0;}
+.ei-bar-wrap{flex:1;height:5px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.ei-bar{height:100%;border-radius:4px;}
+.ei-time{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;width:52px;text-align:right;flex-shrink:0;}
+.task-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 15px;margin-bottom:9px;}
+.tsc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.tsc-name{font-size:13px;font-weight:500;flex:1;padding-right:8px;line-height:1.3;}
+.tsc-best{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;flex-shrink:0;}
+.tsc-row{display:flex;gap:7px;}
+.tsc-cell{flex:1;background:var(--surface2);border-radius:10px;padding:8px 10px;}
+.tc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.tc-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-top:2px;}
+.no-data{text-align:center;padding:52px 24px;color:var(--muted);font-size:14px;}
+.no-data .nd-icon{font-size:44px;margin-bottom:12px;}
 
-  .stats-strip {
-    display: flex;
-    gap: 12px;
-    padding: 0 28px;
-    margin: 20px 0 28px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .stats-strip::-webkit-scrollbar { display: none; }
-
-  .stat-card {
-    flex: 0 0 auto;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px 20px;
-    min-width: 130px;
-  }
-  .stat-card .val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; }
-  .stat-card .val.green { color: var(--accent); }
-  .stat-card .val.teal { color: var(--accent2); }
-  .stat-card .val.orange { color: var(--accent3); }
-  .stat-card .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
-
-  .section-label {
-    padding: 0 28px;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .btn-main {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 28px 14px;
-    background: var(--accent);
-    color: #0a0a0f;
-    border: none;
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    font-family: 'Syne', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    text-align: left;
-    width: calc(100% - 56px);
-  }
-  .btn-main:active { transform: scale(0.97); opacity: 0.9; }
-  .btn-main .arrow { font-size: 22px; }
-
-  .btn-secondary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 28px 14px;
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 24px;
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    width: calc(100% - 56px);
-  }
-  .btn-secondary:active { transform: scale(0.97); }
-  .btn-secondary .sub { font-size: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-weight: 400; margin-top: 2px; }
-  .btn-secondary .left { text-align: left; }
-  .btn-secondary .icon { font-size: 24px; }
-
-  .history-list { padding: 0 28px; flex: 1; }
-  .history-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 18px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .history-item .date { font-size: 13px; color: var(--muted); }
-  .history-item .time-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
-  .history-item .badge {
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-  }
-  .badge.record { background: rgba(200,255,62,0.15); color: var(--accent); }
-  .badge.good { background: rgba(62,255,184,0.15); color: var(--accent2); }
-  .badge.slow { background: rgba(255,107,62,0.15); color: var(--accent3); }
-
-  /* ─── TASK LIST SCREEN ─── */
-  .task-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 50px 24px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .back-btn {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-  }
-  .task-header h2 { font-size: 20px; font-weight: 700; flex: 1; }
-
-  .add-task-bar {
-    display: flex;
-    gap: 10px;
-    padding: 16px 20px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .add-task-bar input {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 11px 16px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    outline: none;
-  }
-  .add-task-bar input:focus { border-color: var(--accent); }
-  .add-task-bar input::placeholder { color: var(--muted); }
-
-  .time-input-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px 10px;
-  }
-  .time-input-group input[type=number] {
-    width: 36px;
-    background: none;
-    border: none;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    text-align: center;
-    outline: none;
-    -moz-appearance: textfield;
-  }
-  .time-input-group input[type=number]::-webkit-outer-spin-button,
-  .time-input-group input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .time-input-group .sep { color: var(--muted); font-weight: 700; }
-
-  .add-btn {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: var(--accent);
-    border: none;
-    color: #0a0a0f;
-    font-size: 22px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-    font-weight: 700;
-  }
-
-  .tasks-scrollable {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 20px;
-  }
-
-  .task-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: var(--transition);
-  }
-  .task-item:active { transform: scale(0.98); }
-  .task-drag { color: var(--muted); font-size: 20px; cursor: grab; flex-shrink: 0; }
-  .task-info { flex: 1; min-width: 0; }
-  .task-name { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .task-time { font-family: 'Syne', sans-serif; font-size: 12px; color: var(--accent); margin-top: 2px; }
-  .task-del {
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    background: rgba(255,107,62,0.12);
-    border: none;
-    color: var(--accent3);
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-  }
-  .task-edit {
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    background: var(--surface2);
-    border: none;
-    color: var(--muted);
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-  }
-
-  .total-bar {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .total-bar .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-  .total-bar .val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent); }
-
-  /* ─── SESSION SCREEN ─── */
-  .session-screen {
-    background: var(--bg);
-  }
-
-  .session-top {
-    padding: 50px 24px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  .session-mode-badge {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-  }
-  .mode-test { background: rgba(255,107,62,0.15); color: var(--accent3); }
-  .mode-real { background: rgba(200,255,62,0.15); color: var(--accent); }
-
-  .session-stop {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px 16px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  .progress-container {
-    padding: 0 24px;
-    margin-bottom: 24px;
-  }
-  .progress-text {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .progress-bar {
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    border-radius: 4px;
-    transition: width 0.6s ease;
-  }
-
-  .current-task-card {
-    margin: 0 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 28px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .current-task-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-  }
-
-  .task-number {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-  .current-task-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 28px;
-  }
-
-  .timers-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .timer-block {
-    background: var(--surface2);
-    border-radius: 16px;
-    padding: 14px 16px;
-  }
-  .timer-block .tlbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
-  .timer-block .tval {
-    font-family: 'Syne', sans-serif;
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  .timer-block.elapsed .tval { color: var(--text); }
-  .timer-block.target .tval { color: var(--accent); }
-  .timer-block.overtime .tval { color: var(--accent3) !important; animation: pulse 1s infinite; }
-
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
-
-  .btn-done {
-    width: 100%;
-    background: var(--accent);
-    color: #0a0a0f;
-    border: none;
-    border-radius: 18px;
-    padding: 20px;
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: var(--transition);
-  }
-  .btn-done:active { transform: scale(0.97); }
-  .btn-done .check { font-size: 22px; }
-
-  .next-task-preview {
-    margin: 16px 20px 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .next-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-  .next-name { font-size: 14px; font-weight: 500; }
-  .next-time { font-size: 12px; color: var(--accent2); font-family: 'Syne', sans-serif; font-weight: 600; }
-  .next-icon { font-size: 20px; margin-left: auto; color: var(--muted); }
-
-  .session-global {
-    margin: 14px 20px 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 18px;
-    display: flex;
-    justify-content: space-between;
-  }
-  .session-global .sg-item .sg-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-  .session-global .sg-item .sg-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
-
-  /* ─── TRANSITION OVERLAY ─── */
-  .transition-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .transition-overlay.visible { opacity: 1; pointer-events: all; }
-  .transition-overlay .next-up { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; }
-  .transition-overlay .task-big { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; text-align: center; padding: 0 32px; line-height: 1.2; }
-  .transition-overlay .countdown-big {
-    font-family: 'Syne', sans-serif;
-    font-size: 80px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-top: 32px;
-    animation: countPulse 1s ease infinite;
-  }
-  @keyframes countPulse { 0% { transform: scale(1.1); } 50% { transform: scale(1); } 100% { transform: scale(1.1); } }
-
-  /* ─── RESULTS SCREEN ─── */
-  .results-screen { overflow-y: auto; }
-  .results-header {
-    padding: 60px 28px 32px;
-    background: linear-gradient(180deg, #0d0d18 0%, var(--bg) 100%);
-    text-align: center;
-  }
-  .results-header .emoji { font-size: 52px; margin-bottom: 16px; }
-  .results-header h2 { font-size: 28px; font-weight: 800; }
-  .results-header .total-time {
-    font-family: 'Syne', sans-serif;
-    font-size: 52px;
-    font-weight: 800;
-    color: var(--accent);
-    margin: 12px 0 4px;
-  }
-  .results-header .vs-target { font-size: 14px; color: var(--muted); }
-
-  .results-chart { padding: 0 24px 20px; }
-  .results-chart h3 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
-
-  .result-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 8px;
-  }
-  .result-row .rr-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .result-row .rr-name { font-size: 14px; font-weight: 500; }
-  .result-row .rr-times { font-family: 'Syne', sans-serif; font-size: 13px; }
-  .rr-times .actual { font-weight: 700; }
-  .rr-times .sep { color: var(--muted); margin: 0 4px; }
-  .rr-times .target-t { color: var(--muted); }
-  .result-row .rr-bar { height: 4px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-  .result-row .rr-fill { height: 100%; border-radius: 4px; }
-  .fill-good { background: var(--accent2); }
-  .fill-over { background: var(--accent3); }
-  .fill-perfect { background: var(--accent); }
-
-  .results-actions { padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 12px; }
-
-  /* ─── STATS SCREEN ─── */
-  .stats-screen { overflow-y: auto; }
-  .stats-header {
-    padding: 50px 24px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
-  .stats-content { padding: 20px 20px; }
-  .stats-section-title { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; margin-top: 24px; }
-  .stats-section-title:first-child { margin-top: 0; }
-
-  .record-card {
-    background: linear-gradient(135deg, rgba(200,255,62,0.1) 0%, var(--surface) 60%);
-    border: 1px solid rgba(200,255,62,0.25);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 14px;
-  }
-  .record-card .rc-lbl { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
-  .record-card .rc-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
-  .record-card .rc-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .task-stat-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 8px;
-  }
-  .task-stat-row .ts-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .task-stat-row .ts-name { font-size: 14px; font-weight: 500; }
-  .task-stat-row .ts-best { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--accent); }
-  .task-stat-row .ts-avg { font-size: 12px; color: var(--muted); }
-  .ts-compare { display: flex; gap: 8px; margin-top: 6px; }
-  .ts-compare .tc-item {
-    flex: 1;
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 6px 10px;
-  }
-  .tc-item .tc-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-  .tc-item .tc-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
-
-  .no-data {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .no-data .nd-icon { font-size: 42px; margin-bottom: 12px; }
-
-  /* ─── MODAL ─── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(8px);
-    z-index: 200;
-    display: flex;
-    align-items: flex-end;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .modal-overlay.visible { opacity: 1; pointer-events: all; }
-  .modal-sheet {
-    width: 100%;
-    background: var(--surface);
-    border-radius: 24px 24px 0 0;
-    padding: 24px;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  }
-  .modal-overlay.visible .modal-sheet { transform: none; }
-  .modal-sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-  .modal-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    outline: none;
-    margin-bottom: 12px;
-  }
-  .modal-input:focus { border-color: var(--accent); }
-  .modal-time-row { display: flex; gap: 12px; margin-bottom: 20px; }
-  .modal-time-row .time-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  .modal-time-row input[type=number] {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    outline: none;
-    -moz-appearance: textfield;
-  }
-  .modal-time-row input[type=number]::-webkit-outer-spin-button,
-  .modal-time-row input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .modal-time-row input[type=number]:focus { border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 10px; }
-  .modal-cancel {
-    flex: 1;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .modal-save {
-    flex: 2;
-    background: var(--accent);
-    border: none;
-    border-radius: 14px;
-    padding: 14px;
-    color: #0a0a0f;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  /* ─── TOAST ─── */
-  .toast {
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 500;
-    transition: transform 0.35s ease;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ─── MISC ─── */
-  .spacer { flex: 1; }
-  .flex { display: flex; }
-  .gap-8 { gap: 8px; }
-  .mt-8 { margin-top: 8px; }
-
-  /* drag highlight */
-  .task-item.dragging { opacity: 0.5; border: 1px dashed var(--accent); }
-  .task-item.drag-over { border-color: var(--accent2); }
-
-  /* session complete pulse */
-  @keyframes celebratePulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-    100% { transform: scale(1); }
-  }
-  .celebrate { animation: celebratePulse 0.5s ease 3; }
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .28s ease;}
+.modal-bg.on{opacity:1;pointer-events:all;}
+.modal-sheet{width:100%;background:var(--surface);border-radius:24px 24px 0 0;padding:24px 22px 38px;transform:translateY(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);}
+.modal-bg.on .modal-sheet{transform:none;}
+.modal-sheet h3{font-size:18px;font-weight:700;margin-bottom:18px;}
+.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:13px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;margin-bottom:12px;}
+.modal-input:focus{border-color:var(--accent);}
+.modal-time-row{display:flex;gap:12px;margin-bottom:20px;}
+.modal-time-row>div{flex:1;}
+.mtl{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.modal-time-row input[type=number]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:12px;color:var(--text);font-family:'Syne',sans-serif;font-size:22px;font-weight:700;text-align:center;outline:none;-moz-appearance:textfield;}
+.modal-time-row input[type=number]::-webkit-outer-spin-button,.modal-time-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+.modal-time-row input[type=number]:focus{border-color:var(--accent);}
+.modal-actions{display:flex;gap:10px;}
+.modal-cancel{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:13px;padding:14px;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;}
+.modal-save{flex:2;background:var(--accent);border:none;border-radius:13px;padding:14px;color:#0a0a0f;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:11px 20px;font-size:14px;font-weight:500;z-index:500;transition:transform .3s ease;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<!-- TRANSITION OVERLAY -->
-<div class="transition-overlay" id="transitionOverlay">
-  <div class="next-up">Prochaine tâche</div>
-  <div class="task-big" id="transitionTaskName">—</div>
-  <div class="countdown-big" id="transitionCountdown">3</div>
+<div class="t-overlay" id="tOverlay">
+  <div class="t-next-lbl">Prochaine tâche</div>
+  <div class="t-task-name" id="tName">—</div>
+  <div class="t-count" id="tCount">3</div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- MODAL EDIT TASK -->
-<div class="modal-overlay" id="editModal">
+<div class="modal-bg" id="editModal">
   <div class="modal-sheet">
     <h3>Modifier la tâche</h3>
-    <input class="modal-input" id="editTaskName" placeholder="Nom de la tâche" />
+    <input class="modal-input" id="editName" placeholder="Nom de la tâche"/>
     <div class="modal-time-row">
-      <div style="flex:1">
-        <div class="time-label">Minutes</div>
-        <input type="number" id="editMinutes" min="0" max="99" placeholder="00" />
-      </div>
-      <div style="flex:1">
-        <div class="time-label">Secondes</div>
-        <input type="number" id="editSeconds" min="0" max="59" placeholder="00" />
-      </div>
+      <div><div class="mtl">Minutes</div><input type="number" id="editMin" min="0" max="99"/></div>
+      <div><div class="mtl">Secondes</div><input type="number" id="editSec" min="0" max="59"/></div>
     </div>
     <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeEditModal()">Annuler</button>
-      <button class="modal-save" onclick="saveEditTask()">Enregistrer</button>
+      <button class="modal-cancel" onclick="closeModal()">Annuler</button>
+      <button class="modal-save" onclick="saveEdit()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- ════════ SCREEN: HOME ════════ -->
-<div class="screen active" id="screenHome">
-  <div class="home-header">
-    <div class="label">Votre location saisonnière</div>
+<!-- HOME -->
+<div class="screen active" id="sHome">
+  <div class="home-hero">
+    <div class="eyebrow">Votre location saisonnière</div>
     <h1>Ménage<br><span>Pro</span></h1>
   </div>
-
-  <div class="stats-strip" id="homeStatsStrip">
-    <div class="stat-card">
-      <div class="val green" id="statSessions">0</div>
-      <div class="lbl">Sessions</div>
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kv g" id="kSessions">0</div><div class="kl">Sessions</div></div>
+    <div class="kpi"><div class="kv t" id="kRecord">—</div><div class="kl">Record</div></div>
+    <div class="kpi"><div class="kv o" id="kMoy">—</div><div class="kl">Moyenne</div></div>
+    <div class="kpi"><div class="kv w" id="kObj">—</div><div class="kl">Objectif</div></div>
+  </div>
+  <div class="score-ring-card">
+    <div class="score-ring">
+      <svg width="68" height="68" viewBox="0 0 68 68">
+        <circle class="ring-bg" cx="34" cy="34" r="29"/>
+        <circle class="ring-fill" id="ringFill" cx="34" cy="34" r="29" stroke-dasharray="182.2" stroke-dashoffset="182.2"/>
+      </svg>
+      <div class="ring-text" id="ringText">—</div>
     </div>
-    <div class="stat-card">
-      <div class="val teal" id="statBestTime">—</div>
-      <div class="lbl">Record</div>
-    </div>
-    <div class="stat-card">
-      <div class="val orange" id="statAvgTime">—</div>
-      <div class="lbl">Moyenne</div>
-    </div>
-    <div class="stat-card">
-      <div class="val green" id="statTarget">—</div>
-      <div class="lbl">Objectif</div>
+    <div class="score-info">
+      <div class="si-title">Score de régularité</div>
+      <div class="si-sub" id="scoreSub">Lancez votre première session</div>
     </div>
   </div>
-
-  <div class="section-label">Lancer une session</div>
-  <button class="btn-main" onclick="startSession('real')">
-    <div>
-      <div>🏃 Ménage complet</div>
-      <div style="font-size:12px;font-weight:400;margin-top:3px;opacity:0.7;" id="homeTargetTime">Chargement…</div>
-    </div>
-    <div class="arrow">→</div>
-  </button>
-  <button class="btn-secondary" onclick="startSession('test')">
-    <div class="left">
-      <div>⏱ Mode Test</div>
-      <div class="sub">Chronométrer sans objectif pour calibrer</div>
-    </div>
-    <div class="icon">→</div>
-  </button>
-
-  <div style="height:16px"></div>
-  <div class="section-label">Gérer</div>
-  <button class="btn-secondary" onclick="showScreen('screenTasks')">
-    <div class="left">
-      <div>📋 Mes tâches</div>
-      <div class="sub" id="taskCountLabel">Chargement…</div>
-    </div>
-    <div class="icon">→</div>
-  </button>
-  <button class="btn-secondary" onclick="showScreen('screenStats')">
-    <div class="left">
-      <div>📊 Statistiques & Records</div>
-      <div class="sub">Historique et challenges personnels</div>
-    </div>
-    <div class="icon">→</div>
-  </button>
-
-  <div style="height:16px"></div>
-  <div class="section-label">Dernières sessions</div>
-  <div class="history-list" id="homeHistory">
+  <div class="sec-lbl">Lancer une session</div>
+  <div class="home-btns">
+    <button class="btn-primary" onclick="startSession('real')">
+      <div><div>🏃 Ménage complet</div><div class="btn-sub" id="homeObjTime">—</div></div><span>→</span>
+    </button>
+    <button class="btn-secondary" onclick="startSession('test')">
+      <div><div>⏱ Mode Test</div><div class="btn-sub">Chronométrer sans objectif pour calibrer</div></div><span>→</span>
+    </button>
+  </div>
+  <div class="sec-lbl">Gérer</div>
+  <div class="home-btns" style="margin-bottom:20px">
+    <button class="btn-secondary" onclick="go('sTasks')">
+      <div><div>📋 Mes tâches</div><div class="btn-sub" id="taskCountLbl">—</div></div><span>→</span>
+    </button>
+    <button class="btn-secondary" onclick="go('sStats')">
+      <div><div>📊 Statistiques & Records</div><div class="btn-sub">Historique et challenges</div></div><span>→</span>
+    </button>
+  </div>
+  <div class="sec-lbl">Dernières sessions</div>
+  <div class="hist-list" id="histList">
     <div class="no-data"><div class="nd-icon">🗓️</div>Aucune session enregistrée</div>
   </div>
-  <div style="height:30px"></div>
 </div>
 
-<!-- ════════ SCREEN: TASKS ════════ -->
-<div class="screen" id="screenTasks">
-  <div class="task-header">
-    <div class="back-btn" onclick="showScreen('screenHome')">←</div>
+<!-- TASKS -->
+<div class="screen" id="sTasks">
+  <div class="page-header">
+    <div class="back-btn" onclick="go('sHome')">←</div>
     <h2>Mes tâches</h2>
   </div>
-
-  <div class="add-task-bar">
-    <input type="text" id="newTaskName" placeholder="Nouvelle tâche…" />
-    <div class="time-input-group">
-      <input type="number" id="newTaskMin" min="0" max="99" value="5" />
+  <div class="add-bar">
+    <input type="text" id="newName" placeholder="Nouvelle tâche…"/>
+    <div class="time-grp">
+      <input type="number" id="newMin" min="0" max="99" value="5"/>
       <span class="sep">:</span>
-      <input type="number" id="newTaskSec" min="0" max="59" value="00" />
+      <input type="number" id="newSec" min="0" max="59" value="00"/>
     </div>
     <button class="add-btn" onclick="addTask()">+</button>
   </div>
-
-  <div class="tasks-scrollable" id="tasksList"></div>
-
-  <div class="total-bar">
-    <div class="lbl">Durée totale estimée</div>
-    <div class="val" id="tasksTotal">—</div>
+  <div class="tasks-list" id="tasksList"></div>
+  <div class="total-footer">
+    <div class="tf-lbl">Durée totale estimée</div>
+    <div class="tf-val" id="tasksTotal">—</div>
   </div>
 </div>
 
-<!-- ════════ SCREEN: SESSION ════════ -->
-<div class="screen session-screen" id="screenSession">
-  <div class="session-top">
-    <div class="session-mode-badge" id="sessionModeBadge">MODE</div>
-    <button class="session-stop" onclick="stopSession()">Arrêter ✕</button>
+<!-- SESSION -->
+<div class="screen" id="sSession">
+  <div class="sess-top">
+    <div class="mode-badge" id="modeBadge">MODE</div>
+    <button class="stop-btn" onclick="stopSession()">Arrêter ✕</button>
   </div>
-
-  <div class="progress-container">
-    <div class="progress-text">
-      <span id="sessionProgressText">Tâche 1 / 1</span>
-      <span id="sessionProgressPct">0%</span>
-    </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="sessionProgressFill" style="width:0%"></div>
-    </div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="progTxt">Tâche 1/1</span><span id="progPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
   </div>
-
-  <div class="current-task-card" id="currentTaskCard">
-    <div class="task-number" id="sessionTaskNumber">Tâche 1 sur 1</div>
-    <div class="current-task-name" id="sessionTaskName">—</div>
-
-    <div class="timers-row">
-      <div class="timer-block elapsed">
-        <div class="tlbl">Temps écoulé</div>
-        <div class="tval" id="sessionElapsed">00:00</div>
+  <div class="task-card">
+    <div class="tc-num" id="tcNum">Tâche 1 sur 1</div>
+    <div class="tc-name" id="tcName">—</div>
+    <div class="timers-grid">
+      <div class="t-block t-elapsed" id="tElapsedBlock">
+        <div class="tb-lbl">Temps écoulé</div>
+        <div class="tb-val" id="tElapsed">00:00</div>
       </div>
-      <div class="timer-block target">
-        <div class="tlbl">Objectif</div>
-        <div class="tval" id="sessionTarget">—</div>
+      <div class="t-block t-target">
+        <div class="tb-lbl">Objectif</div>
+        <div class="tb-val" id="tTarget">—</div>
       </div>
     </div>
-
-    <button class="btn-done" onclick="completeTask()">
-      <span class="check">✓</span> Tâche terminée
-    </button>
+    <button class="done-btn" onclick="completeTask()">✓ Tâche terminée</button>
   </div>
-
-  <div class="next-task-preview" id="nextTaskPreview" style="display:none">
-    <div>
-      <div class="next-label">Suivante</div>
-      <div class="next-name" id="nextTaskName">—</div>
-      <div class="next-time" id="nextTaskTime">—</div>
+  <div class="next-preview" id="nextPreview" style="display:none">
+    <div class="np-info">
+      <div class="np-lbl">Suivante</div>
+      <div class="np-name" id="npName">—</div>
+      <div class="np-time" id="npTime">—</div>
     </div>
-    <div class="next-icon">↓</div>
+    <span style="color:var(--muted);font-size:18px">↓</span>
   </div>
-
-  <div class="session-global">
-    <div class="sg-item">
-      <div class="sg-lbl">Total écoulé</div>
-      <div class="sg-val" id="sessionTotalElapsed">00:00</div>
-    </div>
-    <div class="sg-item" style="text-align:center">
-      <div class="sg-lbl">Total objectif</div>
-      <div class="sg-val" id="sessionTotalTarget">—</div>
-    </div>
-    <div class="sg-item" style="text-align:right">
-      <div class="sg-lbl">Restant</div>
-      <div class="sg-val" id="sessionTotalRemaining">—</div>
-    </div>
+  <div class="sess-footer">
+    <div class="sf-item"><div class="sf-lbl">Total écoulé</div><div class="sf-val" id="sfElapsed">00:00</div></div>
+    <div class="sf-item" style="text-align:center"><div class="sf-lbl">Objectif global</div><div class="sf-val" id="sfTarget">—</div></div>
+    <div class="sf-item" style="text-align:right"><div class="sf-lbl">Restant</div><div class="sf-val" id="sfRemain">—</div></div>
   </div>
 </div>
 
-<!-- ════════ SCREEN: RESULTS ════════ -->
-<div class="screen results-screen" id="screenResults">
-  <div class="results-header">
-    <div class="emoji" id="resultsEmoji">🏆</div>
-    <h2 id="resultsTitle">Session terminée !</h2>
-    <div class="total-time" id="resultsTotalTime">0:00:00</div>
-    <div class="vs-target" id="resultsVsTarget">vs objectif : —</div>
+<!-- RESULTS -->
+<div class="screen" id="sResults" style="overflow-y:auto">
+  <div class="results-hero">
+    <div class="res-emoji" id="resEmoji">🏆</div>
+    <div class="res-title" id="resTitle">Session terminée !</div>
+    <div class="res-time" id="resTime">—</div>
+    <div class="res-vs" id="resVs">—</div>
   </div>
-
-  <div class="results-chart">
-    <h3>Détail par tâche</h3>
-    <div id="resultsTaskList"></div>
+  <div class="res-kpi-row">
+    <div class="res-kpi"><div class="rk-val" id="rkScore" style="color:var(--accent)">—</div><div class="rk-lbl">Score /100</div></div>
+    <div class="res-kpi"><div class="rk-val" id="rkRecord" style="color:var(--accent2)">—</div><div class="rk-lbl">Record</div></div>
+    <div class="res-kpi"><div class="rk-val" id="rkMoy" style="color:var(--accent3)">—</div><div class="rk-lbl">Moyenne</div></div>
   </div>
-
-  <div class="results-actions">
-    <button class="btn-main" onclick="showScreen('screenHome'); renderHome();">
-      ← Retour à l'accueil
-    </button>
-    <button class="btn-secondary" onclick="showScreen('screenStats')">
-      <div class="left"><div>📊 Voir les statistiques</div></div>
-      <div class="icon">→</div>
+  <div class="res-section">
+    <div class="res-sec-title">Détail par tâche</div>
+    <div id="resTaskList"></div>
+  </div>
+  <div class="res-actions">
+    <button class="btn-primary" onclick="go('sHome');renderHome()">← Retour à l'accueil</button>
+    <button class="btn-secondary" onclick="go('sStats')">
+      <div><div>📊 Statistiques complètes</div></div><span>→</span>
     </button>
   </div>
 </div>
 
-<!-- ════════ SCREEN: STATS ════════ -->
-<div class="screen stats-screen" id="screenStats">
-  <div class="stats-header">
-    <div class="back-btn" onclick="showScreen('screenHome')">←</div>
+<!-- STATS -->
+<div class="screen" id="sStats" style="overflow-y:auto">
+  <div class="page-header">
+    <div class="back-btn" onclick="go('sHome')">←</div>
     <h2>Statistiques</h2>
   </div>
   <div class="stats-content" id="statsContent"></div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
-//  STATE & STORAGE
-// ══════════════════════════════════════════════════
-const LS = {
-  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
-  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
-};
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+function uid(){return Math.random().toString(36).slice(2,9);}
 
-const DEFAULT_TASKS = [
-  { id: uid(), name: "Poussière des plinthes",               seconds: 300 },
-  { id: uid(), name: "Nettoyer les murs avec éponge magique", seconds: 480 },
-  { id: uid(), name: "Nettoyer les vitres",                  seconds: 720 },
-  { id: uid(), name: "Mettre antical et frotter dans les sdb", seconds: 300 },
-  { id: uid(), name: "Nettoyer SDB",                         seconds: 900 },
-  { id: uid(), name: "Nettoyer la cuisine",                  seconds: 2100 },
-  { id: uid(), name: "Nettoyer les WC",                      seconds: 720 },
-  { id: uid(), name: "Nettoyer les Roborock",                seconds: 180 },
-  { id: uid(), name: "Roborock serpillère",                  seconds: 120 },
-  { id: uid(), name: "Nettoyer Skimmers et robot",           seconds: 600 },
-  { id: uid(), name: "Nettoyer filtre piscine",              seconds: 300 },
-  { id: uid(), name: "Enlever les draps et serviettes",      seconds: 300 },
-  { id: uid(), name: "Nettoyer tables de nuit et les lever", seconds: 300 },
-  { id: uid(), name: "Faire les lits",                       seconds: 1500 },
-  { id: uid(), name: "Buanderie",                            seconds: 720 },
-  { id: uid(), name: "Terrasse et Barbecue",                 seconds: 900 },
-  { id: uid(), name: "Nettoyer les abords piscine",         seconds: 380 },
-  { id: uid(), name: "Tondre pelouse, entrée et jeu de boules", seconds: 1800 },
+const DEFAULT_TASKS=[
+  {id:uid(),name:"Poussière des plinthes",seconds:300},
+  {id:uid(),name:"Nettoyer les murs avec éponge magique",seconds:480},
+  {id:uid(),name:"Nettoyer les vitres",seconds:720},
+  {id:uid(),name:"Mettre antical et frotter dans les sdb",seconds:300},
+  {id:uid(),name:"Nettoyer SDB",seconds:900},
+  {id:uid(),name:"Nettoyer la cuisine",seconds:2100},
+  {id:uid(),name:"Nettoyer les WC",seconds:720},
+  {id:uid(),name:"Nettoyer les Roborock",seconds:180},
+  {id:uid(),name:"Roborock serpillère",seconds:120},
+  {id:uid(),name:"Nettoyer Skimmers et robot",seconds:600},
+  {id:uid(),name:"Nettoyer filtre piscine",seconds:300},
+  {id:uid(),name:"Enlever les draps et serviettes",seconds:300},
+  {id:uid(),name:"Nettoyer tables de nuit et les lever",seconds:300},
+  {id:uid(),name:"Faire les lits",seconds:1500},
+  {id:uid(),name:"Buanderie",seconds:720},
+  {id:uid(),name:"Terrasse et Barbecue",seconds:900},
+  {id:uid(),name:"Nettoyer les abords piscine",seconds:380},
+  {id:uid(),name:"Tondre pelouse, entrée et jeu de boules",seconds:1800},
 ];
 
-function uid() { return Math.random().toString(36).slice(2,9); }
+let tasks=LS.get('tasks')||DEFAULT_TASKS;
+let sessions=LS.get('sessions')||[];
+function saveTasks(){LS.set('tasks',tasks);}
+function saveSessions(){LS.set('sessions',sessions);}
 
-let tasks = LS.get('tasks') || DEFAULT_TASKS;
-let sessions = LS.get('sessions') || [];
+function fmt(s){const neg=s<0;s=Math.abs(s);return(neg?'-':'')+String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function fmtH(s){s=Math.abs(s);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;if(h>0)return h+'h'+String(m).padStart(2,'0')+'m';return m+'m'+String(sc).padStart(2,'0')+'s';}
+function totalSec(){return tasks.reduce((a,t)=>a+t.seconds,0);}
 
-function saveTasks() { LS.set('tasks', tasks); }
-function saveSessions() { LS.set('sessions', sessions); }
+function calcScore(sl){
+  const real=sl.filter(s=>s.mode==='real');
+  if(!real.length)return null;
+  const target=totalSec();
+  const scores=real.map(s=>{const pct=Math.abs(s.totalElapsed-target)/target*100;return Math.max(0,Math.round(100-pct));});
+  return Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+}
 
-// ══════════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'screenTasks') renderTaskList();
-  if (id === 'screenStats') renderStats();
+  if(id==='sTasks')renderTasks();
+  if(id==='sStats')renderStats();
 }
 
-// ══════════════════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════════════════
-function fmtTime(s) {
-  const m = Math.floor(Math.abs(s) / 60);
-  const sec = Math.abs(s) % 60;
-  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-}
-function fmtHMS(s) {
-  const h = Math.floor(s/3600);
-  const m = Math.floor((s%3600)/60);
-  const sec = s%60;
-  if(h>0) return `${h}h${String(m).padStart(2,'0')}m`;
-  return `${m}m${String(sec).padStart(2,'0')}s`;
-}
-function totalSeconds() { return tasks.reduce((a,t) => a + t.seconds, 0); }
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ══════════════════════════════════════════════════
-//  HOME
-// ══════════════════════════════════════════════════
-function renderHome() {
-  const total = totalSeconds();
-  document.getElementById('homeTargetTime').textContent = `Durée estimée : ${fmtHMS(total)}`;
-  document.getElementById('statTarget').textContent = fmtHMS(total);
-  document.getElementById('taskCountLabel').textContent = `${tasks.length} tâches • ${fmtHMS(total)}`;
-
-  const realSessions = sessions.filter(s => s.mode === 'real');
-  document.getElementById('statSessions').textContent = realSessions.length;
-
-  if (realSessions.length > 0) {
-    const best = Math.min(...realSessions.map(s => s.totalElapsed));
-    const avg = Math.round(realSessions.reduce((a,s) => a+s.totalElapsed, 0) / realSessions.length);
-    document.getElementById('statBestTime').textContent = fmtHMS(best);
-    document.getElementById('statAvgTime').textContent = fmtHMS(avg);
+// HOME
+function renderHome(){
+  const total=totalSec();
+  document.getElementById('homeObjTime').textContent='Durée estimée : '+fmtH(total);
+  document.getElementById('kObj').textContent=fmtH(total);
+  document.getElementById('taskCountLbl').textContent=tasks.length+' tâches • '+fmtH(total);
+  const real=sessions.filter(s=>s.mode==='real');
+  document.getElementById('kSessions').textContent=real.length;
+  if(real.length){
+    const best=Math.min(...real.map(s=>s.totalElapsed));
+    const avg=Math.round(real.reduce((a,s)=>a+s.totalElapsed,0)/real.length);
+    document.getElementById('kRecord').textContent=fmtH(best);
+    document.getElementById('kMoy').textContent=fmtH(avg);
   } else {
-    document.getElementById('statBestTime').textContent = '—';
-    document.getElementById('statAvgTime').textContent = '—';
+    document.getElementById('kRecord').textContent='—';
+    document.getElementById('kMoy').textContent='—';
   }
-
-  // History
-  const hist = document.getElementById('homeHistory');
-  const sorted = [...sessions].filter(s=>s.mode==='real').sort((a,b) => b.date - a.date).slice(0,5);
-  if (sorted.length === 0) {
-    hist.innerHTML = '<div class="no-data"><div class="nd-icon">🗓️</div>Aucune session enregistrée</div>';
-    return;
-  }
-  const best = Math.min(...sessions.filter(s=>s.mode==='real').map(s=>s.totalElapsed));
-  hist.innerHTML = sorted.map(s => {
-    const d = new Date(s.date);
-    const dateStr = d.toLocaleDateString('fr-FR', {day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-    const diff = s.totalElapsed - totalSeconds();
-    let badge = '';
-    if (s.totalElapsed === best) badge = '<span class="badge record">🏆 Record</span>';
-    else if (diff <= 0) badge = '<span class="badge good">En avance</span>';
-    else badge = '<span class="badge slow">+' + fmtHMS(Math.abs(diff)) + '</span>';
-    return `<div class="history-item">
-      <div>
-        <div style="font-size:13px;font-weight:500;">${dateStr}</div>
-        <div class="date">${fmtHMS(s.totalElapsed)}</div>
-      </div>
-      ${badge}
-    </div>`;
+  const score=calcScore(sessions);
+  const rf=document.getElementById('ringFill'),rt=document.getElementById('ringText'),ss=document.getElementById('scoreSub');
+  if(score!==null){
+    rt.textContent=score;
+    const c=2*Math.PI*29;
+    rf.style.strokeDashoffset=c-(c*score/100);
+    rf.style.stroke=score>=80?'var(--accent)':score>=60?'var(--accent2)':'var(--accent3)';
+    ss.textContent='Basé sur '+real.length+' session'+(real.length>1?'s':'')+' réelle'+(real.length>1?'s':'');
+  } else {rt.textContent='—';ss.textContent='Lancez votre première session réelle';}
+  const hist=document.getElementById('histList');
+  const sorted=[...real].sort((a,b)=>b.date-a.date).slice(0,5);
+  if(!sorted.length){hist.innerHTML='<div class="no-data"><div class="nd-icon">🗓️</div>Aucune session enregistrée</div>';return;}
+  const best=real.length?Math.min(...real.map(s=>s.totalElapsed)):Infinity;
+  hist.innerHTML=sorted.map(s=>{
+    const d=new Date(s.date);
+    const ds=d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const diff=s.totalElapsed-total;
+    const badge=s.totalElapsed===best?'<span class="badge rec">🏆 Record</span>':diff<=0?'<span class="badge good">En avance</span>':'<span class="badge slow">+'+fmtH(diff)+'</span>';
+    return '<div class="hist-item"><div><div style="font-size:13px;font-weight:500">'+ds+'</div><div class="hi-time">'+fmtH(s.totalElapsed)+'</div></div>'+badge+'</div>';
   }).join('');
 }
 
-// ══════════════════════════════════════════════════
-//  TASK LIST
-// ══════════════════════════════════════════════════
-function renderTaskList() {
-  const list = document.getElementById('tasksList');
-  list.innerHTML = tasks.map((t,i) => `
-    <div class="task-item" draggable="true" data-index="${i}" 
-         ondragstart="dragStart(event,${i})" ondragover="dragOver(event,${i})" ondrop="drop(event,${i})" ondragleave="dragLeave(event)">
-      <div class="task-drag">⠿</div>
+// TASKS
+function renderTasks(){
+  document.getElementById('tasksList').innerHTML=tasks.map((t,i)=>`
+    <div class="task-item">
+      <div class="task-order">
+        <div class="order-btn" onclick="moveTask(${i},-1)">▲</div>
+        <div class="order-btn" onclick="moveTask(${i},1)">▼</div>
+      </div>
       <div class="task-info">
         <div class="task-name">${t.name}</div>
-        <div class="task-time">⏱ ${fmtTime(t.seconds)}</div>
+        <div class="task-time-lbl">⏱ ${fmt(t.seconds)}</div>
       </div>
-      <button class="task-edit" onclick="openEditModal(${i})">✏️</button>
-      <button class="task-del" onclick="deleteTask(${i})">✕</button>
-    </div>
-  `).join('');
-  document.getElementById('tasksTotal').textContent = fmtHMS(totalSeconds());
+      <button class="task-edit" onclick="openEdit(${i})">✏️</button>
+      <button class="task-del" onclick="delTask(${i})">✕</button>
+    </div>`).join('');
+  document.getElementById('tasksTotal').textContent=fmtH(totalSec());
+}
+function moveTask(i,dir){const j=i+dir;if(j<0||j>=tasks.length)return;[tasks[i],tasks[j]]=[tasks[j],tasks[i]];saveTasks();renderTasks();}
+function addTask(){
+  const name=document.getElementById('newName').value.trim();
+  const min=parseInt(document.getElementById('newMin').value)||0;
+  const sec=parseInt(document.getElementById('newSec').value)||0;
+  if(!name){toast('⚠️ Entrez un nom');return;}
+  tasks.push({id:uid(),name,seconds:min*60+sec});saveTasks();
+  document.getElementById('newName').value='';document.getElementById('newMin').value='5';document.getElementById('newSec').value='00';
+  renderTasks();toast('✅ Tâche ajoutée');
+}
+function delTask(i){tasks.splice(i,1);saveTasks();renderTasks();}
+let editIdx=null;
+function openEdit(i){editIdx=i;document.getElementById('editName').value=tasks[i].name;document.getElementById('editMin').value=Math.floor(tasks[i].seconds/60);document.getElementById('editSec').value=tasks[i].seconds%60;document.getElementById('editModal').classList.add('on');}
+function closeModal(){document.getElementById('editModal').classList.remove('on');editIdx=null;}
+function saveEdit(){
+  if(editIdx===null)return;
+  const name=document.getElementById('editName').value.trim();
+  const min=parseInt(document.getElementById('editMin').value)||0;
+  const sec=parseInt(document.getElementById('editSec').value)||0;
+  if(!name){toast('⚠️ Entrez un nom');return;}
+  tasks[editIdx]={...tasks[editIdx],name,seconds:min*60+sec};saveTasks();closeModal();renderTasks();toast('✅ Mis à jour');
 }
 
-function addTask() {
-  const name = document.getElementById('newTaskName').value.trim();
-  const min = parseInt(document.getElementById('newTaskMin').value) || 0;
-  const sec = parseInt(document.getElementById('newTaskSec').value) || 0;
-  if (!name) { showToast('⚠️ Entrez un nom de tâche'); return; }
-  tasks.push({ id: uid(), name, seconds: min*60+sec });
-  saveTasks();
-  document.getElementById('newTaskName').value = '';
-  document.getElementById('newTaskMin').value = '5';
-  document.getElementById('newTaskSec').value = '00';
-  renderTaskList();
-  showToast('✅ Tâche ajoutée');
+// SESSION
+let sess=null,sessInt=null;
+function startSession(mode){
+  if(!tasks.length){toast('⚠️ Aucune tâche');return;}
+  sess={mode,tasks:tasks.map(t=>({...t,elapsed:0,completed:false})),idx:0,taskStart:Date.now(),sessStart:Date.now(),taskElapsed:0,totalElapsed:0};
+  go('sSession');
+  document.getElementById('modeBadge').textContent=mode==='test'?'⏱ MODE TEST':'🏃 MÉNAGE RÉEL';
+  document.getElementById('modeBadge').className='mode-badge '+(mode==='test'?'mode-test':'mode-real');
+  document.getElementById('sfTarget').textContent=fmtH(totalSec());
+  updateSessUI();sessInt=setInterval(tickSess,1000);announce(0);
+}
+function tickSess(){if(!sess)return;sess.taskElapsed=Math.floor((Date.now()-sess.taskStart)/1000);sess.totalElapsed=Math.floor((Date.now()-sess.sessStart)/1000);updateSessUI();}
+function updateSessUI(){
+  if(!sess)return;
+  const t=sess.tasks[sess.idx],el=sess.taskElapsed||0,tot=sess.totalElapsed||0;
+  document.getElementById('tcNum').textContent='Tâche '+(sess.idx+1)+' sur '+sess.tasks.length;
+  document.getElementById('tcName').textContent=t.name;
+  document.getElementById('tElapsed').textContent=fmt(el);
+  document.getElementById('tTarget').textContent=fmt(t.seconds);
+  document.getElementById('tElapsedBlock').classList.toggle('t-overtime',el>t.seconds);
+  const pct=Math.round(sess.idx/sess.tasks.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent='Tâche '+(sess.idx+1)+' / '+sess.tasks.length;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('sfElapsed').textContent=fmtH(tot);
+  const rem=totalSec()-tot;
+  document.getElementById('sfRemain').textContent=rem>=0?fmtH(rem):'-'+fmtH(Math.abs(rem));
+  const next=sess.tasks[sess.idx+1];
+  const np=document.getElementById('nextPreview');
+  if(next){np.style.display='flex';document.getElementById('npName').textContent=next.name;document.getElementById('npTime').textContent=fmt(next.seconds);}
+  else np.style.display='none';
+}
+function completeTask(){
+  if(!sess)return;clearInterval(sessInt);
+  sess.tasks[sess.idx].elapsed=Math.floor((Date.now()-sess.taskStart)/1000);
+  sess.tasks[sess.idx].completed=true;
+  if(sess.idx+1>=sess.tasks.length){sess.totalElapsed=Math.floor((Date.now()-sess.sessStart)/1000);finishSession();return;}
+  sess.idx++;showTransition(sess.tasks[sess.idx]);
+}
+function showTransition(task){
+  const ov=document.getElementById('tOverlay');
+  document.getElementById('tName').textContent=task.name;
+  ov.classList.add('on');announce(sess.idx);
+  let c=3;document.getElementById('tCount').textContent=c;
+  const ti=setInterval(()=>{c--;if(c<=0){clearInterval(ti);ov.classList.remove('on');sess.taskStart=Date.now();sess.taskElapsed=0;updateSessUI();sessInt=setInterval(tickSess,1000);bip();}else document.getElementById('tCount').textContent=c;},1000);
+}
+function stopSession(){if(!confirm('Arrêter la session ?'))return;clearInterval(sessInt);sess=null;go('sHome');renderHome();}
+function finishSession(){
+  const sd={date:Date.now(),mode:sess.mode,totalElapsed:sess.totalElapsed,tasks:sess.tasks.map(t=>({id:t.id,name:t.name,target:t.seconds,elapsed:t.elapsed||0}))};
+  sessions.push(sd);saveSessions();go('sResults');renderResults(sd);sess=null;
 }
 
-function deleteTask(i) {
-  tasks.splice(i, 1);
-  saveTasks();
-  renderTaskList();
-}
-
-// drag & drop
-let dragIdx = null;
-function dragStart(e, i) { dragIdx = i; e.currentTarget.classList.add('dragging'); }
-function dragOver(e, i) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
-function drop(e, i) {
-  e.preventDefault();
-  e.currentTarget.classList.remove('drag-over');
-  document.querySelectorAll('.task-item').forEach(el => el.classList.remove('dragging'));
-  if (dragIdx === null || dragIdx === i) return;
-  const item = tasks.splice(dragIdx, 1)[0];
-  tasks.splice(i, 0, item);
-  saveTasks();
-  renderTaskList();
-  dragIdx = null;
-}
-
-// edit modal
-let editIdx = null;
-function openEditModal(i) {
-  editIdx = i;
-  const t = tasks[i];
-  document.getElementById('editTaskName').value = t.name;
-  document.getElementById('editMinutes').value = Math.floor(t.seconds/60);
-  document.getElementById('editSeconds').value = t.seconds % 60;
-  document.getElementById('editModal').classList.add('visible');
-}
-function closeEditModal() {
-  document.getElementById('editModal').classList.remove('visible');
-  editIdx = null;
-}
-function saveEditTask() {
-  if (editIdx === null) return;
-  const name = document.getElementById('editTaskName').value.trim();
-  const min = parseInt(document.getElementById('editMinutes').value) || 0;
-  const sec = parseInt(document.getElementById('editSeconds').value) || 0;
-  if (!name) { showToast('⚠️ Entrez un nom'); return; }
-  tasks[editIdx] = { ...tasks[editIdx], name, seconds: min*60+sec };
-  saveTasks();
-  closeEditModal();
-  renderTaskList();
-  showToast('✅ Tâche mise à jour');
-}
-
-// ══════════════════════════════════════════════════
-//  SESSION ENGINE
-// ══════════════════════════════════════════════════
-let session = null;
-let sessionInterval = null;
-
-function startSession(mode) {
-  if (tasks.length === 0) { showToast('⚠️ Aucune tâche configurée'); return; }
-  session = {
-    mode,
-    tasks: tasks.map(t => ({ ...t, elapsed: 0, completed: false })),
-    currentIdx: 0,
-    taskStart: Date.now(),
-    sessionStart: Date.now(),
-    totalElapsed: 0,
-  };
-  showScreen('screenSession');
-  document.getElementById('sessionModeBadge').textContent = mode === 'test' ? '⏱ MODE TEST' : '🏃 MÉNAGE RÉEL';
-  document.getElementById('sessionModeBadge').className = 'session-mode-badge ' + (mode==='test' ? 'mode-test' : 'mode-real');
-  updateSessionUI();
-  sessionInterval = setInterval(tickSession, 1000);
-  announceTask(session.currentIdx);
-}
-
-function tickSession() {
-  if (!session) return;
-  const now = Date.now();
-  const taskElapsed = Math.floor((now - session.taskStart) / 1000);
-  const totalElapsed = Math.floor((now - session.sessionStart) / 1000);
-  session.currentTaskElapsed = taskElapsed;
-  session.totalElapsed = totalElapsed;
-  updateSessionUI();
-}
-
-function updateSessionUI() {
-  if (!session) return;
-  const idx = session.currentIdx;
-  const t = session.tasks[idx];
-  const elapsed = session.currentTaskElapsed || 0;
-  const totalElapsed = session.totalElapsed || 0;
-
-  document.getElementById('sessionTaskNumber').textContent = `Tâche ${idx+1} sur ${session.tasks.length}`;
-  document.getElementById('sessionTaskName').textContent = t.name;
-  document.getElementById('sessionElapsed').textContent = fmtTime(elapsed);
-  document.getElementById('sessionTarget').textContent = fmtTime(t.seconds);
-
-  const elapsedEl = document.getElementById('sessionElapsed').parentElement;
-  if (elapsed > t.seconds) elapsedEl.classList.add('overtime');
-  else elapsedEl.classList.remove('overtime');
-
-  const pct = Math.round((idx / session.tasks.length) * 100);
-  document.getElementById('sessionProgressFill').style.width = pct + '%';
-  document.getElementById('sessionProgressText').textContent = `Tâche ${idx+1} / ${session.tasks.length}`;
-  document.getElementById('sessionProgressPct').textContent = pct + '%';
-
-  // Totals
-  const completedSeconds = session.tasks.slice(0, idx).reduce((a,t) => a + (t.elapsed||0), 0);
-  document.getElementById('sessionTotalElapsed').textContent = fmtHMS(totalElapsed);
-  const totalTarget = totalSeconds();
-  document.getElementById('sessionTotalTarget').textContent = fmtHMS(totalTarget);
-  const remaining = totalTarget - totalElapsed;
-  document.getElementById('sessionTotalRemaining').textContent = remaining > 0 ? fmtHMS(remaining) : '-' + fmtHMS(Math.abs(remaining));
-
-  // Next task
-  const next = session.tasks[idx+1];
-  if (next) {
-    document.getElementById('nextTaskPreview').style.display = 'flex';
-    document.getElementById('nextTaskName').textContent = next.name;
-    document.getElementById('nextTaskTime').textContent = fmtTime(next.seconds);
+// RESULTS
+function renderResults(s){
+  const target=totalSec(),diff=s.totalElapsed-target;
+  document.getElementById('resTime').textContent=fmtH(s.totalElapsed);
+  document.getElementById('resVs').textContent='Objectif : '+fmtH(target)+' • '+(diff<=0?'🎉 '+fmtH(Math.abs(diff))+' d\'avance !':'+'+fmtH(diff)+' de retard');
+  const real=sessions.filter(s=>s.mode==='real');
+  if(s.mode==='real'&&real.length){
+    const best=Math.min(...real.map(x=>x.totalElapsed));
+    const avg=Math.round(real.reduce((a,x)=>a+x.totalElapsed,0)/real.length);
+    const score=calcScore(sessions);
+    document.getElementById('rkRecord').textContent=fmtH(best);
+    document.getElementById('rkMoy').textContent=fmtH(avg);
+    document.getElementById('rkScore').textContent=score!==null?score+'/100':'—';
+    if(s.totalElapsed===best){document.getElementById('resEmoji').textContent='🏆';document.getElementById('resTitle').textContent='Nouveau record !';}
+    else if(diff<=0){document.getElementById('resEmoji').textContent='⚡';document.getElementById('resTitle').textContent='En avance sur l\'objectif !';}
+    else{document.getElementById('resEmoji').textContent='✅';document.getElementById('resTitle').textContent='Session terminée !';}
   } else {
-    document.getElementById('nextTaskPreview').style.display = 'none';
+    document.getElementById('rkRecord').textContent='—';document.getElementById('rkMoy').textContent='—';document.getElementById('rkScore').textContent='—';
+    document.getElementById('resEmoji').textContent='⏱️';document.getElementById('resTitle').textContent='Session test terminée';
   }
-}
-
-function completeTask() {
-  if (!session) return;
-  clearInterval(sessionInterval);
-  const idx = session.currentIdx;
-  const elapsed = Math.floor((Date.now() - session.taskStart) / 1000);
-  session.tasks[idx].elapsed = elapsed;
-  session.tasks[idx].completed = true;
-
-  if (idx + 1 >= session.tasks.length) {
-    // Session complete
-    session.totalElapsed = Math.floor((Date.now() - session.sessionStart) / 1000);
-    finishSession();
-    return;
-  }
-
-  // Show transition
-  session.currentIdx++;
-  session.taskStart = Date.now() + 3000; // 3s countdown
-  session.currentTaskElapsed = 0;
-
-  showTransition(session.tasks[session.currentIdx]);
-}
-
-function showTransition(task) {
-  const overlay = document.getElementById('transitionOverlay');
-  document.getElementById('transitionTaskName').textContent = task.name;
-  overlay.classList.add('visible');
-  announceTask(session.currentIdx);
-
-  let count = 3;
-  document.getElementById('transitionCountdown').textContent = count;
-
-  const timer = setInterval(() => {
-    count--;
-    if (count <= 0) {
-      clearInterval(timer);
-      overlay.classList.remove('visible');
-      session.taskStart = Date.now();
-      session.currentTaskElapsed = 0;
-      updateSessionUI();
-      sessionInterval = setInterval(tickSession, 1000);
-      playBip();
-    } else {
-      document.getElementById('transitionCountdown').textContent = count;
-    }
-  }, 1000);
-}
-
-function stopSession() {
-  if (!confirm('Arrêter la session en cours ?')) return;
-  clearInterval(sessionInterval);
-  session = null;
-  showScreen('screenHome');
-  renderHome();
-}
-
-function finishSession() {
-  if (!session) return;
-
-  // Save session
-  const sessionData = {
-    date: Date.now(),
-    mode: session.mode,
-    totalElapsed: session.totalElapsed,
-    tasks: session.tasks.map(t => ({ id: t.id, name: t.name, target: t.seconds, elapsed: t.elapsed||0 }))
-  };
-  sessions.push(sessionData);
-  saveSessions();
-
-  showScreen('screenResults');
-  renderResults(sessionData);
-  session = null;
-}
-
-// ══════════════════════════════════════════════════
-//  RESULTS
-// ══════════════════════════════════════════════════
-function renderResults(s) {
-  const total = s.totalElapsed;
-  const target = totalSeconds();
-  const diff = total - target;
-
-  document.getElementById('resultsTotalTime').textContent = fmtHMS(total);
-  document.getElementById('resultsVsTarget').textContent = `Objectif : ${fmtHMS(target)} • ${diff <= 0 ? '🎉 ' + fmtHMS(Math.abs(diff)) + ' d\'avance !' : '+' + fmtHMS(diff) + ' de retard'}`;
-
-  const realSessions = sessions.filter(s=>s.mode==='real');
-  if (s.mode === 'real' && realSessions.length > 0) {
-    const best = Math.min(...realSessions.map(s=>s.totalElapsed));
-    if (total === best) {
-      document.getElementById('resultsEmoji').textContent = '🏆';
-      document.getElementById('resultsTitle').textContent = 'Nouveau record !';
-    } else if (diff <= 0) {
-      document.getElementById('resultsEmoji').textContent = '⚡';
-      document.getElementById('resultsTitle').textContent = 'En avance sur l\'objectif !';
-    } else {
-      document.getElementById('resultsEmoji').textContent = '✅';
-      document.getElementById('resultsTitle').textContent = 'Session terminée !';
-    }
-  } else if (s.mode === 'test') {
-    document.getElementById('resultsEmoji').textContent = '⏱️';
-    document.getElementById('resultsTitle').textContent = 'Session test terminée';
-  }
-
-  const list = document.getElementById('resultsTaskList');
-  list.innerHTML = s.tasks.map(t => {
-    const ratio = t.elapsed / t.target;
-    const pct = Math.min(ratio * 100, 100);
-    const over = t.elapsed > t.target;
-    const diff = t.elapsed - t.target;
-    const fillClass = ratio <= 0.95 ? 'fill-perfect' : (over ? 'fill-over' : 'fill-good');
-    return `<div class="result-row">
-      <div class="rr-top">
-        <div class="rr-name">${t.name}</div>
-        <div class="rr-times">
-          <span class="actual" style="color:${over?'var(--accent3)':'var(--accent2)'}">${fmtTime(t.elapsed)}</span>
-          <span class="sep">/</span>
-          <span class="target-t">${fmtTime(t.target)}</span>
-        </div>
-      </div>
-      <div class="rr-bar"><div class="rr-fill ${fillClass}" style="width:${pct}%"></div></div>
-    </div>`;
+  document.getElementById('resTaskList').innerHTML=s.tasks.map(t=>{
+    const ratio=t.target>0?t.elapsed/t.target:1,pct=Math.min(ratio*100,100),over=t.elapsed>t.target,close=!over&&ratio>=0.85;
+    return '<div class="res-task-row"><div class="rtr-top"><div class="rtr-name">'+t.name+'</div><div class="rtr-times"><span class="rtr-actual" style="color:'+(over?'var(--accent3)':'var(--accent2)')+'">'+fmt(t.elapsed)+'</span><span class="rtr-sep">/</span><span class="rtr-target">'+fmt(t.target)+'</span></div></div><div class="rtr-bar"><div class="rtr-fill '+(over?'fill-over':close?'fill-close':'fill-under')+'" style="width:'+pct+'%"></div></div></div>';
   }).join('');
 }
 
-// ══════════════════════════════════════════════════
-//  STATS
-// ══════════════════════════════════════════════════
-function renderStats() {
-  const container = document.getElementById('statsContent');
-  const realSessions = sessions.filter(s=>s.mode==='real');
-  const target = totalSeconds();
-
-  if (realSessions.length === 0) {
-    container.innerHTML = '<div class="no-data"><div class="nd-icon">📊</div>Lancez votre première session pour voir vos statistiques</div>';
-    return;
-  }
-
-  const best = Math.min(...realSessions.map(s=>s.totalElapsed));
-  const avg = Math.round(realSessions.reduce((a,s)=>a+s.totalElapsed,0)/realSessions.length);
-  const bestDate = new Date(realSessions.find(s=>s.totalElapsed===best).date);
-
-  let html = '';
-
-  // Global records
-  html += '<div class="stats-section-title">Records globaux</div>';
-  html += `<div class="record-card">
-    <div class="rc-lbl">🏆 Meilleur temps</div>
-    <div class="rc-val">${fmtHMS(best)}</div>
-    <div class="rc-sub">Objectif : ${fmtHMS(target)} • Réalisé le ${bestDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</div>
-  </div>`;
-
-  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
-    <div class="stat-card">
-      <div class="val teal">${fmtHMS(avg)}</div>
-      <div class="lbl">Temps moyen</div>
-    </div>
-    <div class="stat-card">
-      <div class="val green">${realSessions.length}</div>
-      <div class="lbl">Sessions</div>
-    </div>
-  </div>`;
-
-  // Per-task stats
-  html += '<div class="stats-section-title">Records par tâche</div>';
-
-  tasks.forEach(task => {
-    const taskTimes = realSessions
-      .map(s => s.tasks.find(t => t.id === task.id || t.name === task.name))
-      .filter(Boolean)
-      .map(t => t.elapsed)
-      .filter(e => e > 0);
-
-    if (taskTimes.length === 0) return;
-
-    const tBest = Math.min(...taskTimes);
-    const tAvg = Math.round(taskTimes.reduce((a,b)=>a+b,0)/taskTimes.length);
-    const tTarget = task.seconds;
-
-    html += `<div class="task-stat-row">
-      <div class="ts-top">
-        <div class="ts-name">${task.name}</div>
-        <div class="ts-best">🏅 ${fmtTime(tBest)}</div>
-      </div>
-      <div class="ts-compare">
-        <div class="tc-item">
-          <div class="tc-lbl">Record</div>
-          <div class="tc-val" style="color:var(--accent)">${fmtTime(tBest)}</div>
-        </div>
-        <div class="tc-item">
-          <div class="tc-lbl">Moyenne</div>
-          <div class="tc-val" style="color:var(--accent2)">${fmtTime(tAvg)}</div>
-        </div>
-        <div class="tc-item">
-          <div class="tc-lbl">Objectif</div>
-          <div class="tc-val" style="color:var(--muted)">${fmtTime(tTarget)}</div>
-        </div>
-      </div>
-    </div>`;
+// STATS
+function renderStats(){
+  const el=document.getElementById('statsContent'),real=sessions.filter(s=>s.mode==='real'),target=totalSec();
+  if(!real.length){el.innerHTML='<div class="no-data"><div class="nd-icon">📊</div>Lancez votre première session pour voir vos statistiques</div>';return;}
+  const best=Math.min(...real.map(s=>s.totalElapsed));
+  const avg=Math.round(real.reduce((a,s)=>a+s.totalElapsed,0)/real.length);
+  const score=calcScore(sessions);
+  const bestDate=new Date(real.find(s=>s.totalElapsed===best).date);
+  const scoreColor=score>=80?'var(--accent)':score>=60?'var(--accent2)':'var(--accent3)';
+  let html='<div class="stats-sec-title">Record global</div>';
+  html+='<div class="record-hero"><div class="rh-lbl">🏆 Meilleur temps</div><div class="rh-val">'+fmtH(best)+'</div><div class="rh-sub">Objectif : '+fmtH(target)+' • Le '+bestDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+'</div></div>';
+  html+='<div class="global-grid"><div class="g-card"><div class="gc-val" style="color:var(--accent2)">'+fmtH(avg)+'</div><div class="gc-lbl">Temps moyen</div></div><div class="g-card"><div class="gc-val" style="color:var(--accent)">'+real.length+'</div><div class="gc-lbl">Sessions réelles</div></div></div>';
+  html+='<div class="score-card"><div class="score-big" style="color:'+scoreColor+'">'+score+'</div><div><div class="sd-title">Score de régularité /100</div><div class="sd-sub">Écart moyen de vos sessions vs l\'objectif de '+fmtH(target)+'<br>100 = parfait, diminue si dépassement</div></div></div>';
+  html+='<div class="stats-sec-title">Évolution des '+Math.min(real.length,8)+' dernières sessions</div><div class="evol-list">';
+  const sorted=[...real].sort((a,b)=>a.date-b.date).slice(-8);
+  const maxT=Math.max(...sorted.map(s=>s.totalElapsed));
+  sorted.reverse().forEach(s=>{
+    const d=new Date(s.date),ds=d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+    const pct=Math.round(s.totalElapsed/maxT*100),isB=s.totalElapsed===best;
+    const col=isB?'var(--accent)':s.totalElapsed<=target?'var(--accent2)':'var(--accent3)';
+    html+='<div class="evol-item"><div class="ei-date">'+ds+'</div><div class="ei-bar-wrap"><div class="ei-bar" style="width:'+pct+'%;background:'+col+'"></div></div><div class="ei-time" style="color:'+col+'">'+fmtH(s.totalElapsed)+(isB?' 🏆':'')+'</div></div>';
   });
-
-  container.innerHTML = html;
+  html+='</div><div class="stats-sec-title">Records par tâche</div>';
+  tasks.forEach(task=>{
+    const times=real.map(s=>s.tasks.find(t=>t.id===task.id||t.name===task.name)).filter(Boolean).map(t=>t.elapsed).filter(e=>e>0);
+    if(!times.length)return;
+    const tBest=Math.min(...times),tAvg=Math.round(times.reduce((a,b)=>a+b,0)/times.length),tTarget=task.seconds;
+    const bc=tBest<=tTarget?'var(--accent)':'var(--accent3)',ac=tAvg<=tTarget?'var(--accent2)':'var(--accent3)';
+    html+='<div class="task-stat-card"><div class="tsc-top"><div class="tsc-name">'+task.name+'</div><div class="tsc-best" style="color:'+bc+'">🏅 '+fmt(tBest)+'</div></div><div class="tsc-row"><div class="tsc-cell"><div class="tc-lbl">Record</div><div class="tc-val" style="color:'+bc+'">'+fmt(tBest)+'</div></div><div class="tsc-cell"><div class="tc-lbl">Moyenne</div><div class="tc-val" style="color:'+ac+'">'+fmt(tAvg)+'</div></div><div class="tsc-cell"><div class="tc-lbl">Objectif</div><div class="tc-val" style="color:var(--muted)">'+fmt(tTarget)+'</div></div></div></div>';
+  });
+  el.innerHTML=html;
 }
 
-// ══════════════════════════════════════════════════
-//  VOICE & SOUND
-// ══════════════════════════════════════════════════
-const synth = window.speechSynthesis;
+// VOICE & SOUND
+const synth=window.speechSynthesis;
+function speak(txt){if(!synth)return;synth.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='fr-FR';u.rate=0.92;synth.speak(u);}
+function announce(idx){if(!sess)return;const t=sess.tasks[idx];speak('Tâche '+(idx+1)+' : '+t.name+'. Objectif : '+Math.floor(t.seconds/60)+' minutes.');}
+function bip(){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;o.type='sine';g.gain.setValueAtTime(.35,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);o.start();o.stop(ctx.currentTime+.4);}catch(e){}}
 
-function speak(text) {
-  if (!synth) return;
-  synth.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'fr-FR';
-  utt.rate = 0.95;
-  utt.pitch = 1;
-  synth.speak(utt);
-}
-
-function announceTask(idx) {
-  if (!session) return;
-  const t = session.tasks[idx];
-  const msg = `Tâche ${idx+1} : ${t.name}. Objectif : ${Math.floor(t.seconds/60)} minutes.`;
-  speak(msg);
-}
-
-function playBip() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.4, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.4);
-  } catch(e) {}
-}
-
-// ══════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════
 renderHome();
 </script>
 </body>
